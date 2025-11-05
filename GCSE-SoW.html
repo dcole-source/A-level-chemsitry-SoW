@@ -154,7 +154,7 @@
         // --- Tab Generation ---
         const topics = [
           'Overview',
-          'Separating Substances',
+          'Separating Substances', // <-- Fixed: Changed back to this name
           'Structure of the Atom and PT',
           'Structure and Bonding',
           'Groups 1, 7 and 0',
@@ -162,7 +162,7 @@
           'Rates of Reaction',
           'Bulk and Surface Properties',
           'Testing For Ions',
-          'Calculations Involving Masses and Quant',
+          'Calculations Involving Masses and Quantities', // <-- Fixed: Was '... and Quant'
           'Acids, Bases and Salts',
           'Fuels and Hydrocarbons',
           'Pollutants and Atmosphere',
@@ -509,16 +509,23 @@
 
             // First pass: collect all rows for this topic
             const topicRows = [];
+            let currentTopic = ''; // *** NEW: Keep track of the current topic ***
+
             for (let i = 1; i < allTable1SheetData.length; i++) {
                 const rowData = allTable1SheetData[i];
                 
-                // *** FIX: Need at least 5 columns (A-E) ***
-                if (rowData.length < 5) continue; 
+                if (rowData.length < 1) continue; // Skip totally empty rows
                 
-                // New Mapping: Topic is in Column A (index 0)
+                // *** NEW LOGIC TO HANDLE MERGED TOPIC CELLS ***
+                // Column A (Topic)
                 const rowTopic = rowData[0] ? rowData[0].trim() : '';
+                if (rowTopic !== '') {
+                    currentTopic = rowTopic; // Update current topic if not blank
+                }
+                // *** END NEW LOGIC ***
 
-               if (rowTopic.toLowerCase() === topic.toLowerCase()) { // Make match case-insensitive
+               // Now check against the *tracked* currentTopic
+               if (currentTopic.toLowerCase() === topic.toLowerCase()) { // Make match case-insensitive
                     rowsFound++;
                     
                     // *** FIX: B=Lesson, C=LI, D=Prereq, E=CK ***
@@ -695,40 +702,59 @@
         }
 
 
-        // Robust CSV parser to handle commas inside quotes
+        // Robust CSV parser to handle commas AND newlines inside quotes
         function parseCSV(text) {
-            const lines = [];
-            const rows = text.split(/\r\n|\n/); // Split by new line
-            
-            for (const row of rows) {
-                if (!row) continue;
-                
-                const columns = [];
-                let inQuote = false;
-                let currentField = '';
-                
-                for (let i = 0; i < row.length; i++) {
-                    const char = row[i];
-                    
+            const rows = [];
+            let columns = [];
+            let currentField = '';
+            let inQuote = false;
+
+            // Normalize newlines and add a trailing newline for easier parsing
+            text = text.replace(/\r\n/g, '\n');
+            if (!text.endsWith('\n')) text += '\n';
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+
+                if (inQuote) {
                     if (char === '"') {
-                        // Handle double quotes (escaping a quote)
-                        if (inQuote && row[i+1] === '"') {
+                        if (i + 1 < text.length && text[i + 1] === '"') {
+                            // Escaped double quote
                             currentField += '"';
                             i++; // Skip next quote
                         } else {
-                            inQuote = !inQuote;
+                            // End of quoted field
+                            inQuote = false;
                         }
-                    } else if (char === ',' && !inQuote) {
+                    } else {
+                        currentField += char; // Add char, even if it's a newline
+                    }
+                } else { // Not in quote
+                    if (char === '"') {
+                        // Start of quoted field.
+                        inQuote = true;
+                        // We assume quotes start the field, whitespace is trimmed later.
+                    } else if (char === ',') {
+                        // End of field
                         columns.push(currentField.trim());
+                        currentField = '';
+                    } else if (char === '\n') {
+                        // End of row
+                        columns.push(currentField.trim());
+                        // Only add row if it's not just a single empty field
+                        // (which can happen with trailing newlines)
+                        if (columns.length > 1 || (columns.length === 1 && columns[0] !== '')) {
+                           rows.push(columns);
+                        }
+                        columns = [];
                         currentField = '';
                     } else {
                         currentField += char;
                     }
                 }
-                columns.push(currentField.trim()); // Add last field
-                lines.push(columns);
             }
-            return lines;
+            
+            return rows;
         }
 
 
