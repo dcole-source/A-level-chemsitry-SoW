@@ -442,14 +442,15 @@
                     
                     // New Mapping: B=Lesson, C=LI, D=Prereq, F=CK
                     const lesson = rowData[1] || '';                       // Column B (raw, not escaped yet)
-                    const learningIntention = escapeHTML(rowData[2] || ''); // Column C
+                    const learningIntention = rowData[2] || '';            // Column C (raw, not escaped yet)
                     const prereq = escapeHTML(rowData[3] || '');           // Column D - Get for Table 2
                     const componentKnowledge = escapeHTML(rowData[5] || ''); // Column F (Column E is ignored)
 
                     topicRows.push({
                         lesson: lesson.trim(),
                         lessonEscaped: escapeHTML(lesson),
-                        learningIntention,
+                        learningIntention: learningIntention.trim(),
+                        learningIntentionEscaped: escapeHTML(learningIntention),
                         prereq,
                         componentKnowledge
                     });
@@ -461,29 +462,29 @@
                 return;
             }
 
-            // Second pass: group rows by lesson and calculate rowspan
+            // Second pass: group rows by lesson, then by learning intention
             const lessonGroups = [];
-            let currentGroup = null;
+            let currentLessonGroup = null;
             
             for (let i = 0; i < topicRows.length; i++) {
                 const row = topicRows[i];
                 
                 if (row.lesson !== '') {
                     // Start a new lesson group
-                    if (currentGroup) {
-                        lessonGroups.push(currentGroup);
+                    if (currentLessonGroup) {
+                        lessonGroups.push(currentLessonGroup);
                     }
-                    currentGroup = {
+                    currentLessonGroup = {
                         lesson: row.lessonEscaped,
                         rows: [row]
                     };
                 } else {
                     // Add to current lesson group (merged cell continuation)
-                    if (currentGroup) {
-                        currentGroup.rows.push(row);
+                    if (currentLessonGroup) {
+                        currentLessonGroup.rows.push(row);
                     } else {
-                        // Edge case: empty lesson at the start, create a group with empty lesson
-                        currentGroup = {
+                        // Edge case: empty lesson at the start
+                        currentLessonGroup = {
                             lesson: '',
                             rows: [row]
                         };
@@ -492,36 +493,76 @@
             }
             
             // Don't forget the last group
-            if (currentGroup) {
-                lessonGroups.push(currentGroup);
+            if (currentLessonGroup) {
+                lessonGroups.push(currentLessonGroup);
             }
 
-            // Third pass: render rows with rowspan
-            for (const group of lessonGroups) {
-                const rowspan = group.rows.length;
+            // Third pass: within each lesson group, group by learning intention
+            for (const lessonGroup of lessonGroups) {
+                const liGroups = [];
+                let currentLIGroup = null;
                 
-                for (let i = 0; i < group.rows.length; i++) {
-                    const rowData = group.rows[i];
-                    const row = document.createElement('tr');
-                    row.className = 'bg-white border-b hover:bg-gray-50';
+                for (let i = 0; i < lessonGroup.rows.length; i++) {
+                    const row = lessonGroup.rows[i];
                     
-                    // First row of group: include lesson cell with rowspan
-                    // Subsequent rows: skip lesson cell
-                    if (i === 0) {
-                        row.innerHTML = `
-                            <td class="py-4 px-6" rowspan="${rowspan}">${group.lesson}</td>
-                            <td class="py-4 px-6">${rowData.learningIntention}</td>
-                            <td class="py-4 px-6">${rowData.componentKnowledge}</td>
-                            <td class="py-4 px-2 text-center">
-                                <input type="checkbox" class="component-knowledge-checkbox h-4 w-4 rounded border-gray-300 text-[#31473A] focus:ring-[#31473A]/50" 
-                                    data-knowledge="${rowData.componentKnowledge}" 
-                                    data-prereq="${rowData.prereq}">
-                            </td>
-                        `;
+                    if (row.learningIntention !== '') {
+                        // Start a new learning intention group
+                        if (currentLIGroup) {
+                            liGroups.push(currentLIGroup);
+                        }
+                        currentLIGroup = {
+                            learningIntention: row.learningIntentionEscaped,
+                            rows: [row]
+                        };
                     } else {
-                        // Skip the lesson cell for subsequent rows in the group
-                        row.innerHTML = `
-                            <td class="py-4 px-6">${rowData.learningIntention}</td>
+                        // Add to current learning intention group (merged cell continuation)
+                        if (currentLIGroup) {
+                            currentLIGroup.rows.push(row);
+                        } else {
+                            // Edge case: empty LI at the start
+                            currentLIGroup = {
+                                learningIntention: '',
+                                rows: [row]
+                            };
+                        }
+                    }
+                }
+                
+                // Don't forget the last LI group
+                if (currentLIGroup) {
+                    liGroups.push(currentLIGroup);
+                }
+                
+                lessonGroup.liGroups = liGroups;
+            }
+
+            // Fourth pass: render rows with rowspan for both lesson and learning intention
+            for (const lessonGroup of lessonGroups) {
+                const lessonRowspan = lessonGroup.rows.length;
+                let rowIndexInLesson = 0;
+                
+                for (const liGroup of lessonGroup.liGroups) {
+                    const liRowspan = liGroup.rows.length;
+                    
+                    for (let i = 0; i < liGroup.rows.length; i++) {
+                        const rowData = liGroup.rows[i];
+                        const row = document.createElement('tr');
+                        row.className = 'bg-white border-b hover:bg-gray-50';
+                        
+                        let html = '';
+                        
+                        // Include lesson cell only on the first row of the lesson group
+                        if (rowIndexInLesson === 0) {
+                            html += `<td class="py-4 px-6" rowspan="${lessonRowspan}">${lessonGroup.lesson}</td>`;
+                        }
+                        
+                        // Include learning intention cell only on the first row of the LI group
+                        if (i === 0) {
+                            html += `<td class="py-4 px-6" rowspan="${liRowspan}">${liGroup.learningIntention}</td>`;
+                        }
+                        
+                        // Always include component knowledge and checkbox
+                        html += `
                             <td class="py-4 px-6">${rowData.componentKnowledge}</td>
                             <td class="py-4 px-2 text-center">
                                 <input type="checkbox" class="component-knowledge-checkbox h-4 w-4 rounded border-gray-300 text-[#31473A] focus:ring-[#31473A]/50" 
@@ -529,9 +570,11 @@
                                     data-prereq="${rowData.prereq}">
                             </td>
                         `;
+                        
+                        row.innerHTML = html;
+                        knowledgeTbody.appendChild(row);
+                        rowIndexInLesson++;
                     }
-                    
-                    knowledgeTbody.appendChild(row);
                 }
             }
         }
