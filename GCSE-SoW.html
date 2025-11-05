@@ -62,7 +62,7 @@
 
     <div class="max-w-7xl mx-auto">
         <h1 class="text-4xl md:text-5xl font-bold text-[#31473A] mb-6">
-            A-level Chemistry Scheme of Work
+            GCSE Chemistry Scheme of Work
         </h1>
 
         <!-- Tab Navigation -->
@@ -466,18 +466,18 @@
                         const t3_comp_knowledge = escapeHTML(rowData[8] || ''); // Get T3 knowledge
 
                         const linkHTML = (link && (link.startsWith('http://') || link.startsWith('https://')))
-                            ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">${link}</a>`
-                            : link;
+                            ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline break-all">${link}</a>` // Added break-all
+                            : `<span class="break-all">${link}</span>`; // Added break-all
 
                         const row = document.createElement('tr');
                         row.className = 'bg-white border-b hover:bg-gray-50';
                         row.innerHTML = `
-                            <td class="py-4 px-6">${name}</td>
-                            <td class="py-4 px-6">${purpose}</td>
-                            <td class="py-4 px-6">${type}</td>
-                            <td class="py-4 px-6">${info}</td>
+                            <td class="py-4 px-6 break-words">${name}</td> <!-- Added break-words -->
+                            <td class="py-4 px-6 break-words">${purpose}</td> <!-- Added break-words -->
+                            <td class="py-4 px-6 break-words">${type}</td> <!-- Added break-words -->
+                            <td class="py-4 px-6 break-words">${info}</td> <!-- Added break-words -->
                             <td class="py-4 px-6">${linkHTML}</td>
-                            <td class="py-4 px-6 t3-comp-knowledge-col">${t3_comp_knowledge}</td>
+                            <td class="py-4 px-6 t3-comp-knowledge-col break-words">${t3_comp_knowledge}</td> <!-- Added break-words -->
                         `;
                         resourceTbody.appendChild(row);
                     }
@@ -822,20 +822,29 @@
             `;
 
             // HTML for Table 3 (was Table 2)
+            // *** THIS IS THE FIX for column widths ***
             const table3HTML = `
                 <div class="flex justify-between items-center mb-3 mt-8">
                     <h3 class="text-3xl font-semibold text-gray-800">Table 3: Resources</h3>
                     ${filterButtonsHTML}
                 </div>
                 <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
-                    <table class="w-full min-w-[800px] text-base text-left text-black">
+                    <table class="w-full text-base text-left text-black table-fixed"> <!-- Use table-fixed -->
+                        <colgroup> <!-- Define column widths -->
+                            <col style="width: 15%;">
+                            <col style="width: 20%;">
+                            <col style="width: 15%;">
+                            <col style="width: 20%;">
+                            <col style="width: 30%;">
+                            <col style="width: 0%;" class="t3-comp-knowledge-col"> <!-- Hidden column -->
+                        </colgroup>
                         <thead class="text-xs text-white uppercase bg-[#31473A]">
                             <tr>
                                 <th scope="col" class="py-3 px-6">Name of Resource</th>
                                 <th scope="col" class="py-3 px-6">Purpose of Resource</th>
                                 <th scope="col" class="py-3 px-6">Type of Resource</th>
                                 <th scope="col" class="py-3 px-6">More information</th>
-                                <th scope="col" classli-l-0="py-3 px-6">Link</th>
+                                <th scope="col" class="py-3 px-6">Link</th>
                                 <th scope="col" class="py-3 px-6 t3-comp-knowledge-col">Component Knowledge</th>
                             </tr>
                         </thead>
@@ -847,6 +856,7 @@
                     </table>
                 </div>
             `;
+            // *** END OF FIX ***
 
             // Combine all parts
             return `
