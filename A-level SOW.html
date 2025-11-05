@@ -426,7 +426,8 @@
                 return;
             }
 
-            // Loop from 1 to skip header row
+            // First pass: collect all rows for this topic
+            const topicRows = [];
             for (let i = 1; i < allTable1SheetData.length; i++) {
                 const rowData = allTable1SheetData[i];
                 
@@ -440,29 +441,141 @@
                     rowsFound++;
                     
                     // New Mapping: B=Lesson, C=LI, D=Prereq, F=CK
-                    const lesson = escapeHTML(rowData[1] || '');           // Column B
-                    const learningIntention = escapeHTML(rowData[2] || ''); // Column C
+                    const lesson = rowData[1] || '';                       // Column B (raw, not escaped yet)
+                    const learningIntention = rowData[2] || '';            // Column C (raw, not escaped yet)
                     const prereq = escapeHTML(rowData[3] || '');           // Column D - Get for Table 2
                     const componentKnowledge = escapeHTML(rowData[5] || ''); // Column F (Column E is ignored)
 
-                    const row = document.createElement('tr');
-                    row.className = 'bg-white border-b hover:bg-gray-50';
-                    row.innerHTML = `
-                        <td class="py-4 px-6">${lesson}</td>
-                        <td class="py-4 px-6">${learningIntention}</td>
-                        <td class="py-4 px-6">${componentKnowledge}</td>
-                        <td class="py-4 px-2 text-center">
-                            <input type="checkbox" class="component-knowledge-checkbox h-4 w-4 rounded border-gray-300 text-[#31473A] focus:ring-[#31473A]/50" 
-                                data-knowledge="${componentKnowledge}" 
-                                data-prereq="${prereq}">
-                        </td>
-                    `;
-                    knowledgeTbody.appendChild(row);
+                    topicRows.push({
+                        lesson: lesson.trim(),
+                        lessonEscaped: escapeHTML(lesson),
+                        learningIntention: learningIntention.trim(),
+                        learningIntentionEscaped: escapeHTML(learningIntention),
+                        prereq,
+                        componentKnowledge
+                    });
                 }
             }
 
             if (rowsFound === 0) {
                 knowledgeTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="4" class="py-4 px-6 italic text-gray-500 text-center">No component knowledge found for "${escapeHTML(topic)}".</td></tr>`;
+                return;
+            }
+
+            // Second pass: group rows by lesson, then by learning intention
+            const lessonGroups = [];
+            let currentLessonGroup = null;
+            
+            for (let i = 0; i < topicRows.length; i++) {
+                const row = topicRows[i];
+                
+                if (row.lesson !== '') {
+                    // Start a new lesson group
+                    if (currentLessonGroup) {
+                        lessonGroups.push(currentLessonGroup);
+                    }
+                    currentLessonGroup = {
+                        lesson: row.lessonEscaped,
+                        rows: [row]
+                    };
+                } else {
+                    // Add to current lesson group (merged cell continuation)
+                    if (currentLessonGroup) {
+                        currentLessonGroup.rows.push(row);
+                    } else {
+                        // Edge case: empty lesson at the start
+                        currentLessonGroup = {
+                            lesson: '',
+                            rows: [row]
+                        };
+                    }
+                }
+            }
+            
+            // Don't forget the last group
+            if (currentLessonGroup) {
+                lessonGroups.push(currentLessonGroup);
+            }
+
+            // Third pass: within each lesson group, group by learning intention
+            for (const lessonGroup of lessonGroups) {
+                const liGroups = [];
+                let currentLIGroup = null;
+                
+                for (let i = 0; i < lessonGroup.rows.length; i++) {
+                    const row = lessonGroup.rows[i];
+                    
+                    if (row.learningIntention !== '') {
+                        // Start a new learning intention group
+                        if (currentLIGroup) {
+                            liGroups.push(currentLIGroup);
+                        }
+                        currentLIGroup = {
+                            learningIntention: row.learningIntentionEscaped,
+                            rows: [row]
+                        };
+                    } else {
+                        // Add to current learning intention group (merged cell continuation)
+                        if (currentLIGroup) {
+                            currentLIGroup.rows.push(row);
+                        } else {
+                            // Edge case: empty LI at the start
+                            currentLIGroup = {
+                                learningIntention: '',
+                                rows: [row]
+                            };
+                        }
+                    }
+                }
+                
+                // Don't forget the last LI group
+                if (currentLIGroup) {
+                    liGroups.push(currentLIGroup);
+                }
+                
+                lessonGroup.liGroups = liGroups;
+            }
+
+            // Fourth pass: render rows with rowspan for both lesson and learning intention
+            for (const lessonGroup of lessonGroups) {
+                const lessonRowspan = lessonGroup.rows.length;
+                let rowIndexInLesson = 0;
+                
+                for (const liGroup of lessonGroup.liGroups) {
+                    const liRowspan = liGroup.rows.length;
+                    
+                    for (let i = 0; i < liGroup.rows.length; i++) {
+                        const rowData = liGroup.rows[i];
+                        const row = document.createElement('tr');
+                        row.className = 'bg-white border-b hover:bg-gray-50';
+                        
+                        let html = '';
+                        
+                        // Include lesson cell only on the first row of the lesson group
+                        if (rowIndexInLesson === 0) {
+                            html += `<td class="py-4 px-6" rowspan="${lessonRowspan}">${lessonGroup.lesson}</td>`;
+                        }
+                        
+                        // Include learning intention cell only on the first row of the LI group
+                        if (i === 0) {
+                            html += `<td class="py-4 px-6" rowspan="${liRowspan}">${liGroup.learningIntention}</td>`;
+                        }
+                        
+                        // Always include component knowledge and checkbox
+                        html += `
+                            <td class="py-4 px-6">${rowData.componentKnowledge}</td>
+                            <td class="py-4 px-2 text-center">
+                                <input type="checkbox" class="component-knowledge-checkbox h-4 w-4 rounded border-gray-300 text-[#31473A] focus:ring-[#31473A]/50" 
+                                    data-knowledge="${rowData.componentKnowledge}" 
+                                    data-prereq="${rowData.prereq}">
+                            </td>
+                        `;
+                        
+                        row.innerHTML = html;
+                        knowledgeTbody.appendChild(row);
+                        rowIndexInLesson++;
+                    }
+                }
             }
         }
 
@@ -596,7 +709,7 @@
                         <thead class="text-xs text-gray-800 uppercase bg-[#31473A]/10">
                             <tr>
                                 <th scope="col" class="py-3 px-6 w-[50%]">Component Knowledge</th>
-                                <th scope="col" class="py-3 px-6 w-[50%]">Prequisit Knowledge</th>
+                                <th scope="col" class="py-3 px-6 w-[50%]">Prerequisite Knowledge</th>
                             </tr>
                         </thead>
                         <tbody id="lesson-knowledge-tbody-${index}">
@@ -622,7 +735,7 @@
                                 <th scope="col" class="py-3 px-6">Purpose of Resource</th>
                                 <th scope="col" class="py-3 px-6">Type of Resource</th>
                                 <th scope="col" class="py-3 px-6">More information</th>
-                                <th scope="col" classs="py-3 px-6">Link</th>
+                                <th scope="col" class="py-3 px-6">Link</th>
                                 <th scope="col" class="py-3 px-6 t3-comp-knowledge-col">Component Knowledge</th>
                             </tr>
                         </thead>
