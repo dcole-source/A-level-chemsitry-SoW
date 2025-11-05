@@ -36,6 +36,12 @@
             color: #6b7280; /* gray-500 */
         }
 
+        /* NEW: Force long text in table cells to wrap */
+        .tab-content table td {
+            overflow-wrap: break-word;
+            word-break: break-word; /* For wider browser compatibility */
+        }
+
         /* Hide scrollbar but allow scrolling for tab container */
         /* For Webkit browsers (Chrome, Safari) */
         .no-scrollbar::-webkit-scrollbar {
@@ -794,7 +800,7 @@
                     <h3 class="text-3xl font-semibold text-gray-800">Table 2: Lesson Knowledge</h3>
                 </div>
                 <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
-                    <table class="w-full min-w-[600px] text-base text-left text-black">
+                    <table class="w-full min-w-[800px] text-base text-left text-black table-fixed">
                         <thead class="text-xs text-white uppercase bg-[#31473A]"">
                             <tr>
                                 <th scope="col" class="py-3 px-6 w-[50%]">Component Knowledge</th>
@@ -810,21 +816,21 @@
                 </div>
             `;
 
-            // HTML for Table 3 (was Table 2)
+            // HTML for Table 3 (Resources)
             const table3HTML = `
                 <div class="flex justify-between items-center mb-3 mt-8">
                     <h3 class="text-3xl font-semibold text-gray-800">Table 3: Resources</h3>
-                    ${filterButtonsHTML}
+                    ${filterButtonsHTML} <!-- Add filter buttons here -->
                 </div>
                 <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
-                    <table class="w-full min-w-[800px] text-base text-left text-black">
+                    <table class="w-full min-w-[800px] text-base text-left text-black table-fixed">
                         <thead class="text-xs text-white uppercase bg-[#31473A]"">
                             <tr>
-                                <th scope="col" class="py-3 px-6">Name of Resource</th>
-                                <th scope="col" class="py-3 px-6">Purpose of Resource</th>
-                                <th scope="col" class="py-3 px-6">Type of Resource</th>
-                                <th scope="col" class="py-3 px-6">More information</th>
-                                <th scope="col" class="py-3 px-6">Link</th>
+                                <th scope="col" class="py-3 px-6 w-[15%]">Name of Resource</th>
+                                <th scope="col" class="py-3 px-6 w-[25%]">Purpose of Resource</th>
+                                <th scope="col" class="py-3 px-6 w-[10%]">Type of Resource</th>
+                                <th scope="col" class="py-3 px-6 w-[25%]">More information</th>
+                                <th scope="col" class="py-3 px-6 w-[25%]">Link</th>
                                 <th scope="col" class="py-3 px-6 t3-comp-knowledge-col">Component Knowledge</th>
                             </tr>
                         </thead>
