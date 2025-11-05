@@ -123,7 +123,7 @@
         let appInitialized = false; 
         let allSheetData = []; // Store all sheet data for Table 3
         let allTable1SheetData = []; // Store all sheet data for Table 1
-        let currentFilter = { topic: 'Atomic Structure', keywords: [] }; // Store current filter state
+        let currentFilter = { topic: 'Overview', keywords: [] }; // Store current filter state
 
         function setupApp() {
             if (appInitialized) return; 
@@ -153,9 +153,9 @@
 
         // --- Tab Generation ---
         const topics = [
-            'Atomic Structure', 'Amount of Substance', 'Bonding', 'Redox', 'Energetics',
+           'Overview', 'Atomic Structure', 'Amount of Substance', 'Bonding', 'Redox', 'Energetics',
             'Chemical Equilibria', 'Kinetics', 'Thermodynamics', 'Rate Equations',
-            'Acids and Bases', 'Electrode Potentials', 'Groups 2 and 7', 'Period 3', 'Transition Metals',
+            'Acids and Bases', 'Electrode Potentials', 'Groups 2 and 7', 'Transition Metals',
             'Reactions of Ions in Aqueous Solutions', 'Introduction of Organic Chemistry',
             'Alkanes', 'Halogenoalkanes', 'Alkenes', 'Alcohols',
             'Carbonyl Compounds and Optical Isomerism', 'Carboxylic Acids and Derivatives',
@@ -185,7 +185,8 @@
                 // --- START: ADDED FIX ---
                 // Create tab panel
                 const panel = document.createElement('div');
-                panel.className = 'tab-content';
+                // Overview tab needs different padding
+                panel.className = topic === 'Overview' ? 'tab-content p-0' : 'tab-content';
                 panel.id = `tab-panel-${index}`;
                 panel.setAttribute('role', 'tabpanel');
                 panel.innerHTML = getTabContentHTML(index, topic); // Get the content
@@ -286,6 +287,15 @@
                     activePanel.classList.add('visible');
                 }
 
+                // --- NEW LOGIC ---
+                // If it's the overview tab, we just show it. No data to populate.
+                if (topicName === "Overview") {
+                    currentFilter.topic = topicName;
+                    currentFilter.keywords = [];
+                    return; // Don't try to populate tables
+                }
+                // --- END NEW LOGIC ---
+
                 // Update filter state and populate both tables
                 currentFilter.topic = topicName;
                 currentFilter.keywords = []; // Reset keywords when changing tabs
@@ -344,10 +354,6 @@
                 
                 allSheetData = parseCSV(csvText); // Store data for Table 3
 
-                // Populate the initial table (Atomic Structure, index 0)
-                currentFilter.topic = 'Atomic Structure';
-                populateResourceTable(0);
-
             } catch (error) {
                 console.error("Error fetching or parsing sheet data (Table 3):", error);
                 
@@ -382,9 +388,6 @@
                 console.log("Fetched CSV Text (Table 1):", csvText.substring(0, 300) + "...");
                 
                 allTable1SheetData = parseCSV(csvText); // Store data for Table 1
-
-                // Populate the initial table (Atomic Structure, index 0)
-                populateComponentKnowledgeTable(0);
 
             } catch (error) {
                 console.error("Error fetching or parsing sheet data (Table 1):", error);
@@ -718,7 +721,7 @@
         }
 
 
-        // Helper function to prevent XSS
+        // --- Helper function to prevent XSS ---
         function escapeHTML(str) {
             if (!str) return '';
             return str.toString()
@@ -731,6 +734,25 @@
 
         // --- Helper to get Content HTML for ANY tab ---
         function getTabContentHTML(index, topic) {
+           // --- NEW: Handle Overview Tab ---
+           if (topic === 'Overview') {
+               return `
+                   <h2 class="text-2xl font-semibold text-[#31473A] mb-4 p-6">Scheme Overview</h2>
+                   <div class="w-full h-[1200px] border-t border-gray-200">
+                       <iframe 
+                           src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTBDCz20me9Ru-MOKLVQXZlf6C-e1dpiBCcOR8hADVTCWLHfItrDP7hW_hQ2dqopJ-IlcsZ1AyNRFUN/pubhtml?gid=1596310890&amp;single=true&amp;widget=true&amp;headers=false"
+                           width="100%" 
+                           height="100%" 
+                           frameborder="0" 
+                           marginheight="0" 
+                           marginwidth="0">
+                           Loading overview...
+                                              </iframe>
+                   </div>
+               `;
+           }
+           // --- END: Handle Overview Tab ---
+
             // Filter buttons (for Table 3)
             const filterButtonsHTML = `
                 <div class="flex space-x-2">
