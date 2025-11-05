@@ -61,7 +61,7 @@
 <body class="font-sans bg-[#EDF4F2] text-gray-800 p-4 md:p-8">
 
     <div class="max-w-7xl mx-auto">
-        <h1 class="text-3xl md:text-4xl font-bold text-[#31473A] mb-6">
+        <h1 class="text-4xl md:text-5xl font-bold text-[#31473A] mb-6">
             A-level Chemistry Scheme of Work
         </h1>
 
@@ -176,7 +176,7 @@
             topics.forEach((topic, index) => {
                 // Create tab button
                 const button = document.createElement('button');
-                button.className = 'tab-btn whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm transition-colors duration-200 focus:outline-none flex-shrink-0';
+                button.className = 'tab-btn whitespace-nowrap py-4 px-6 border-b-2 font-medium text-base transition-colors duration-200 focus:outline-none flex-shrink-0';
                 button.textContent = topic;
                 button.setAttribute('role', 'tab');
                 button.setAttribute('aria-controls', `tab-panel-${index}`);
@@ -420,7 +420,7 @@
 
             if (allSheetData.length <= 1) {
                 if (resourceTbody.innerHTML.includes('Error')) return; 
-                resourceTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="6" class="py-4 px-6 italic text-gray-500 text-center">Sheet data is empty or not loaded.</td></tr>`;
+                resourceTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="6" class="py-4 px-6 italic text-gray-700 text-center">Sheet data is empty or not loaded.</td></tr>`;
                 return;
             }
 
@@ -477,7 +477,7 @@
                 const message = keywords.length > 0
                     ? `No resources found for "${escapeHTML(topic)}" matching your filter.`
                     : `No resources found for "${escapeHTML(topic)}".`;
-                resourceTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="6" class="py-4 px-6 italic text-gray-500 text-center">${message}</td></tr>`;
+                resourceTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="6" class="py-4 px-6 italic text-gray-700 text-center">${message}</td></tr>`;
             }
         }
 
@@ -492,7 +492,7 @@
 
             if (allTable1SheetData.length <= 1) {
                 if (knowledgeTbody.innerHTML.includes('Error')) return; 
-                knowledgeTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="4" class="py-4 px-6 italic text-gray-500 text-center">Sheet data is empty or not loaded.</td></tr>`;
+                knowledgeTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="4" class="py-4 px-6 italic text-gray-700 text-center">Sheet data is empty or not loaded.</td></tr>`;
                 return;
             }
 
@@ -528,7 +528,7 @@
             }
 
             if (rowsFound === 0) {
-                knowledgeTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="4" class="py-4 px-6 italic text-gray-500 text-center">No component knowledge found for "${escapeHTML(topic)}".</td></tr>`;
+                knowledgeTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="4" class="py-4 px-6 italic text-gray-700 text-center">No component knowledge found for "${escapeHTML(topic)}".</td></tr>`;
                 return;
             }
 
@@ -664,7 +664,7 @@
             if (checkedBoxes.length === 0) {
                 lessonTbody.innerHTML = `
                     <tr class="bg-white border-b hover:bg-gray-50">
-                        <td colspan="2" class="py-4 px-6 italic text-gray-500 text-center">Select one or more items from Table 1 to see lesson knowledge.</td>
+                        <td colspan="2" class="py-4 px-6 italic text-gray-700 text-center">Select one or more items from Table 1 to see lesson knowledge.</td>
                     </tr>`;
                 return;
             }
@@ -756,10 +756,10 @@
             // Filter buttons (for Table 3)
             const filterButtonsHTML = `
                 <div class="flex space-x-2">
-                    <button class="filter-resources-btn text-sm bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-600/50">
+                    <button class="filter-resources-btn text-base bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-600/50">
                         Filter by Selection
                     </button>
-                    <button class="show-all-resources-btn text-sm bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500/50">
+                    <button class="show-all-resources-btn text-base bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500/50">
                         Show All
                     </button>
                 </div>`;
@@ -767,11 +767,11 @@
             // HTML for Table 1
             const table1HTML = `
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-xl font-semibold text-gray-800">Table 1: Component Knowledge</h3>
+                    <h3 class="text-3xl font-semibold text-gray-800">Table 1: Component Knowledge</h3>
                 </div>
                 <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200 mb-8">
-                    <table id="table-1-${index}" class="w-full min-w-[800px] text-sm text-left text-gray-700">
-                        <thead class="text-xs text-gray-800 uppercase bg-[#31473A]/10">
+                    <table id="table-1-${index}" class="w-full min-w-[800px] text-base text-left text-black">
+                        <thead class="text-xs text-white uppercase bg-[#31473A]"">
                             <tr>
                                 <th scope="col" class="py-3 px-6 w-[20%]">Lesson</th>
                                 <th scope="col" class="py-3 px-6 w-[30%]">Learning Intention</th>
@@ -781,7 +781,7 @@
                         </thead>
                         <tbody id="component-knowledge-tbody-${index}">
                             <tr class="bg-white border-b hover:bg-gray-50">
-                                <td colspan="4" class="py-4 px-6 italic text-gray-500 text-center">Loading component knowledge...</td>
+                                <td colspan="4" class="py-4 px-6 italic text-gray-700 text-center">Loading component knowledge...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -791,11 +791,11 @@
             // HTML for NEW Table 2
             const table2HTML = `
                 <div class="flex justify-between items-center mb-3 mt-8">
-                    <h3 class="text-xl font-semibold text-gray-800">Table 2: Lesson Knowledge</h3>
+                    <h3 class="text-3xl font-semibold text-gray-800">Table 2: Lesson Knowledge</h3>
                 </div>
                 <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
-                    <table class="w-full min-w-[600px] text-sm text-left text-gray-700">
-                        <thead class="text-xs text-gray-800 uppercase bg-[#31473A]/10">
+                    <table class="w-full min-w-[600px] text-base text-left text-black">
+                        <thead class="text-xs text-white uppercase bg-[#31473A]"">
                             <tr>
                                 <th scope="col" class="py-3 px-6 w-[50%]">Component Knowledge</th>
                                 <th scope="col" class="py-3 px-6 w-[50%]">Prerequisite Knowledge</th>
@@ -803,7 +803,7 @@
                         </thead>
                         <tbody id="lesson-knowledge-tbody-${index}">
                             <tr class="bg-white border-b hover:bg-gray-50">
-                                <td colspan="2" class="py-4 px-6 italic text-gray-500 text-center">Select one or more items from Table 1 to see lesson knowledge.</td>
+                                <td colspan="2" class="py-4 px-6 italic text-gray-700 text-center">Select one or more items from Table 1 to see lesson knowledge.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -813,12 +813,12 @@
             // HTML for Table 3 (was Table 2)
             const table3HTML = `
                 <div class="flex justify-between items-center mb-3 mt-8">
-                    <h3 class="text-xl font-semibold text-gray-800">Table 3: Resources</h3>
+                    <h3 class="text-3xl font-semibold text-gray-800">Table 3: Resources</h3>
                     ${filterButtonsHTML}
                 </div>
                 <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
-                    <table class="w-full min-w-[800px] text-sm text-left text-gray-700">
-                        <thead class="text-xs text-gray-800 uppercase bg-[#31473A]/10">
+                    <table class="w-full min-w-[800px] text-base text-left text-black">
+                        <thead class="text-xs text-white uppercase bg-[#31473A]"">
                             <tr>
                                 <th scope="col" class="py-3 px-6">Name of Resource</th>
                                 <th scope="col" class="py-3 px-6">Purpose of Resource</th>
@@ -830,7 +830,7 @@
                         </thead>
                         <tbody id="resources-tbody-${index}">
                             <tr class="bg-white border-b hover:bg-gray-50">
-                                <td colspan="6" class="py-4 px-6 italic text-gray-500 text-center">Loading resources...</td>
+                                <td colspan="6" class="py-4 px-6 italic text-gray-700 text-center">Loading resources...</td>
                             </tr>
                         </tbody>
                     </table>
