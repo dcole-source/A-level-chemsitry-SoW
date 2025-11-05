@@ -66,11 +66,25 @@
         </h1>
 
         <!-- Tab Navigation -->
-        <div class="mb-4 border-b border-gray-300">
-            <!-- Scrollable container for tabs -->
-            <nav class="flex overflow-x-auto no-scrollbar -mb-px" aria-label="Tabs">
-                <!-- Tab buttons will be injected here by JavaScript -->
-            </nav>
+        <div class="mb-4"> <!-- Removed border-b -->
+            <div class="relative">
+                <!-- Left Scroll Button -->
+                <button id="tab-scroll-left" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md text-gray-600 hover:text-black transition-all opacity-0 pointer-events-none disabled:opacity-0 -ml-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                
+                <!-- Scrollable container for tabs -->
+                <div class="border-b border-gray-300"> <!-- Added border here -->
+                    <nav id="tab-nav-container" class="flex overflow-x-auto no-scrollbar -mb-px" aria-label="Tabs">
+                        <!-- Tab buttons will be injected here by JavaScript -->
+                    </nav>
+                </div>
+
+                <!-- Right Scroll Button -->
+                <button id="tab-scroll-right" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md text-gray-600 hover:text-black transition-all opacity-0 pointer-events-none disabled:opacity-0 -mr-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
         </div>
 
         <!-- Tab Content Container -->
@@ -153,7 +167,8 @@
         const tabContentContainer = document.getElementById('tab-content-container');
 
         function setupTabs() {
-            if (!tabNav || !tabContentContainer) {
+            const tabNavContainer = document.getElementById('tab-nav-container'); // Renamed variable
+            if (!tabNavContainer || !tabContentContainer) { // Updated check
                 console.error("Tab containers not found.");
                 return;
             }
@@ -167,35 +182,87 @@
                 button.setAttribute('aria-controls', `tab-panel-${index}`);
                 button.setAttribute('data-tab-index', index);
 
+                // --- START: ADDED FIX ---
+                // Create tab panel
+                const panel = document.createElement('div');
+                panel.className = 'tab-content';
+                panel.id = `tab-panel-${index}`;
+                panel.setAttribute('role', 'tabpanel');
+                panel.innerHTML = getTabContentHTML(index, topic); // Get the content
+                // --- END: ADDED FIX ---
+
                 if (index === 0) {
                     button.classList.add('active');
                     button.setAttribute('aria-selected', 'true');
+                    panel.classList.add('visible'); // <-- ALSO ADDED THIS
                 } else {
                     button.setAttribute('aria-selected', 'false');
                 }
 
-                // Create content panel
-                const panel = document.createElement('div');
-                panel.id = `tab-panel-${index}`;
-                panel.className = 'tab-content';
-                panel.setAttribute('role', 'tabpanel');
-                panel.setAttribute('tabindex', '0');
-                
-                // All tabs are now generated dynamically
-                panel.innerHTML = getTabContentHTML(index, topic);
-                
-                if (index === 0) {
-                    panel.classList.add('visible');
-                }
-
-                tabNav.appendChild(button);
+                tabNavContainer.appendChild(button); // Updated variable
                 tabContentContainer.appendChild(panel);
             });
+
+            // --- Tab Scroll Logic ---
+            const scrollLeftBtn = document.getElementById('tab-scroll-left');
+            const scrollRightBtn = document.getElementById('tab-scroll-right');
+            
+            if (scrollLeftBtn && scrollRightBtn && tabNavContainer) {
+                const SCROLL_AMOUNT = 300; // Pixels to scroll
+
+                const updateScrollButtons = () => {
+                    // Use a minimal timeout to let layout settle after scroll/resize
+                    setTimeout(() => {
+                        if (!tabNavContainer) return;
+                        // Use clientWidth for visible area, scrollWidth for total content width
+                        const maxScroll = tabNavContainer.scrollWidth - tabNavContainer.clientWidth;
+                        // Use Math.ceil to handle subpixel rounding issues
+                        const currentScroll = Math.ceil(tabNavContainer.scrollLeft);
+
+                        // Left button logic
+                        if (currentScroll > 0) {
+                            scrollLeftBtn.classList.remove('opacity-0', 'pointer-events-none');
+                        } else {
+                            scrollLeftBtn.classList.add('opacity-0', 'pointer-events-none');
+                        }
+
+                        // Right button logic (use a 1px buffer for safety)
+                        if (currentScroll < maxScroll - 1) {
+                            scrollRightBtn.classList.remove('opacity-0', 'pointer-events-none');
+                        } else {
+                            scrollRightBtn.classList.add('opacity-0', 'pointer-events-none');
+                        }
+                    }, 50); // 50ms delay is usually enough
+                };
+
+                // Add click listeners for scrolling
+                scrollLeftBtn.addEventListener('click', () => {
+                    tabNavContainer.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' });
+                });
+
+                scrollRightBtn.addEventListener('click', () => {
+                    tabNavContainer.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' });
+                });
+
+                // Update buttons when the container is scrolled
+                tabNavContainer.addEventListener('scroll', updateScrollButtons, { passive: true });
+
+                // Use ResizeObserver to update buttons if container size changes
+                const resizeObserver = new ResizeObserver(updateScrollButtons);
+                resizeObserver.observe(tabNavContainer); // Observe the tab container
+                resizeObserver.observe(document.body); // Also observe body for overall resizes
+
+                // Initial check when tabs are first loaded
+                updateScrollButtons();
+            
+            } else {
+                console.error("Tab scroll buttons or container not found. Skipping scroll logic.");
+            }
 
             // --- Event Listeners (using delegation) ---
 
             // Tab Navigation
-            tabNav.addEventListener('click', (e) => {
+            tabNavContainer.addEventListener('click', (e) => { // Updated variable
                 const clickedTab = e.target.closest('.tab-btn');
                 if (!clickedTab) return;
 
@@ -203,7 +270,7 @@
                 const topicName = clickedTab.textContent; 
 
                 // Deactivate all
-                tabNav.querySelectorAll('.tab-btn').forEach(btn => {
+                tabNavContainer.querySelectorAll('.tab-btn').forEach(btn => { // Updated variable
                     btn.classList.remove('active');
                     btn.setAttribute('aria-selected', 'false');
                 });
