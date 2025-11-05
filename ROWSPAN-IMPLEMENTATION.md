@@ -3,6 +3,11 @@
 ## Overview
 This document explains the implementation of HTML rowspan for merged cells in Table 1's Lesson column.
 
+## Visual Demo
+![Rowspan Demo](rowspan-demo-screenshot.png)
+
+See `rowspan-demo.html` for an interactive side-by-side comparison of the before and after appearance.
+
 ## Problem
 The webpage displays Table 1 which pulls data from a Google Sheet. Column B (Lesson) in the Google Sheet has some merged cells. When exported as CSV, merged cells appear as one cell with a value followed by empty cells. The original implementation showed empty cells where merged cells existed.
 
