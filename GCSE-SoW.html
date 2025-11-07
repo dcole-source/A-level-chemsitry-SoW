@@ -129,7 +129,31 @@
         let appInitialized = false; 
         let allSheetData = []; // Store all sheet data for Table 3
         let allTable1SheetData = []; // Store all sheet data for Table 1
-        let topics = []; // Will be populated from the master sheet
+        
+        // --- FIX: Hard-code the topic list as requested ---
+        const topics = [
+           'Overview', 
+           'Separating Substances', 
+           'Structure of the Atom and PT', 
+           'Structure and Bonding', 
+           'Groups 1, 7 and 0', 
+           'Reactivity, Ores, Metals and Corrosion', 
+           'Rates of Reaction', 
+           'Bulk and Surface Properties', 
+           'Testing For Ions', 
+           'Calculations Involving Masses and Quant', 
+           'Acids, Bases and Salts', 
+           'Fuels and Hydrocarbons', 
+           'Pollutants and Atmosphere', 
+           'Alcohols and Carboxylic Acids', 
+           'Polymers', 
+           'Heat Energy Changes', 
+           'Reversible Reactions and Equilibria', 
+           'Electrolysis', 
+           'Fuel Cells'
+        ];
+        // --- END FIX ---
+
         let currentFilter = { topic: 'Overview', keywords: [] }; // Store current filter state
 
         function setupApp() {
@@ -153,6 +177,7 @@
                 });
             }
 
+            setupTabs(); // <-- FIX: Call setupTabs() immediately
             fetchMasterSheetAndSetup(); // Fetches topics AND Table 1 data, then sets up tabs
             fetchSheetData(); // Fetches data for Table 3
         }
@@ -434,41 +459,15 @@
                 
                 allTable1SheetData = parseCSV(csvText); // Store data for Table 1
 
-                // Extract topics from Column A (index 0), skipping header
-                const topicSet = new Set();
-                for (let i = 1; i < allTable1SheetData.length; i++) {
-                    const topic = allTable1SheetData[i][0] ? allTable1SheetData[i][0].trim() : '';
-                    if (topic) {
-                        topicSet.add(topic);
-                    }
-                }
-                
-                // Create the final topics array, starting with 'Overview'
-                topics = ['Overview', ...Array.from(topicSet)];
-                
-                // Now that we have topics, setup the tabs
-                setupTabs();
+                // --- FIX: REMOVED TOPIC EXTRACTION LOGIC ---
+                // The 'topics' array is now hard-coded globally.
+                // --- END FIX ---
 
             } catch (error) {
                 console.error("Error fetching or parsing master sheet data (Table 1 & Topics):", error);
                 
-                // --- START FIX ---
-                // Define fallback topics so the UI can still be built
-                const fallbackTopics = [
-                   'Overview', 'Atomic Structure', 'Amount of Substance', 'Bonding', 'Redox', 'Energetics',
-                    'Chemical Equilibria', 'Kinetics', 'Thermodynamics', 'Rate Equations',
-                    'Acids and Bases', 'Electrode Potentials', 'Groups 2 and 7', 'Transition Metals',
-                    'Reactions of Ions in Aqueous Solutions', 'Introduction of Organic Chemistry',
-                    'Alkanes', 'Halogenoalkanes', 'Alkenes', 'Alcohols',
-                    'Carbonyl Compounds and Optical Isomerism', 'Carboxylic Acids and Derivatives',
-                    'Organic Analysis (year 12)', 'Amines', 'Polymers', 'Amino Acids, Proteins and DNA',
-                    'Organic Synthesis', 'NMR'
-                ];
-                topics = fallbackTopics;
-                console.warn("Using fallback topics to build tabs due to fetch error.");
-
-                // Call setupTabs even if fetch failed, using fallback topics
-                setupTabs(); 
+                // --- FIX: REMOVED FALLBACK TOPICS AND setupTabs() CALL ---
+                // setupTabs() is now called reliably in setupApp()
                 // --- END FIX ---
 
                 let errorMessage = `Error loading component knowledge.`;
@@ -590,11 +589,11 @@
                 if (rowTopic === topic) {
                     rowsFound++;
                     
-                    // New Mapping: B=Lesson, C=LI, D=Prereq, E=CK
+                    // New Mapping: B=Lesson, C=LI, D=CK, E=Prereq
                     const lesson = rowData[1] || '';                       // Column B (raw, not escaped yet)
                     const learningIntention = rowData[2] || '';            // Column C (raw, not escaped yet)
-                    const prereq = escapeHTML(rowData[3] || '');           // Column D - Get for Table 2
-                    const componentKnowledge = escapeHTML(rowData[4] || ''); // Column E (FIXED)
+                    const componentKnowledge = escapeHTML(rowData[3] || ''); // Column D (SWAPPED)
+                    const prereq = escapeHTML(rowData[4] || '');           // Column E (SWAPPED) - Get for Table 2
 
                     topicRows.push({
                         lesson: lesson.trim(),
