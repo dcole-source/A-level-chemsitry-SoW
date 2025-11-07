@@ -581,8 +581,8 @@
             for (let i = 1; i < allTable1SheetData.length; i++) {
                 const rowData = allTable1SheetData[i];
                 
-                // New Mapping: Need at least 6 columns (A-F)
-                if (rowData.length < 6) continue; 
+                // New Mapping: Need at least 5 columns (A-E)
+                if (rowData.length < 5) continue; 
                 
                 // New Mapping: Topic is in Column A (index 0)
                 const rowTopic = rowData[0] ? rowData[0].trim() : '';
@@ -590,11 +590,11 @@
                 if (rowTopic === topic) {
                     rowsFound++;
                     
-                    // New Mapping: B=Lesson, C=LI, D=Prereq, F=CK
+                    // New Mapping: B=Lesson, C=LI, D=Prereq, E=CK
                     const lesson = rowData[1] || '';                       // Column B (raw, not escaped yet)
                     const learningIntention = rowData[2] || '';            // Column C (raw, not escaped yet)
                     const prereq = escapeHTML(rowData[3] || '');           // Column D - Get for Table 2
-                    const componentKnowledge = escapeHTML(rowData[5] || ''); // Column F (Column E is ignored)
+                    const componentKnowledge = escapeHTML(rowData[4] || ''); // Column E (FIXED)
 
                     topicRows.push({
                         lesson: lesson.trim(),
