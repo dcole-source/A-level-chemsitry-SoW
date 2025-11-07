@@ -765,81 +765,38 @@
 
         // Robust CSV parser to handle commas inside quotes
         function parseCSV(text) {
-            const rows = [];
-            let inQuote = false;
-            let row = [];
-            let field = '';
-            let i = 0;
-
-            // Ensure the text ends with a newline to process the last row
-            const newText = text.trim() + '\n';
-
-            while (i < newText.length) {
-                const char = newText[i];
-                const nextChar = newText[i+1];
-
-                if (!inQuote) {
-                    // --- We are NOT inside a quote ---
-                    if (char === ',') {
-                        // End of a field
-                        row.push(field.trim());
-                        field = '';
-                    } else if (char === '\n' || char === '\r') {
-                        // End of a row
-                        
-                        // Handle \r\n (Windows) or \n (Mac/Linux)
-                        if (char === '\r' && nextChar === '\n') {
-                            i++; // Skip the \n
-                        }
-                        
-                        // Only push the row if it has content
-                        if (field || row.length > 0) {
-                            row.push(field.trim());
-                            rows.push(row);
-                        }
-                        
-                        // Reset for next row
-                        row = [];
-                        field = '';
-                    } else if (char === '"') {
-                        // Start of a quoted field
-                        if (field === '') {
-                             inQuote = true;
-                        } else {
-                            // This is a quote in the middle of an unquoted field
-                            // Just add it as a normal character
-                            field += char;
-                        }
-                    } else {
-                        // Normal character
-                        field += char;
-                    }
-                } else {
-                    // --- We ARE inside a quote ---
+            const lines = [];
+            const rows = text.split(/\r\n|\n/); // Split by new line
+            
+            for (const row of rows) {
+                if (!row) continue;
+                
+                const columns = [];
+                let inQuote = false;
+                let currentField = '';
+                
+                for (let i = 0; i < row.length; i++) {
+                    const char = row[i];
+                    
                     if (char === '"') {
-                        if (nextChar === '"') {
-                            // This is an escaped quote ""
-                            // Add a single " to the field and skip the next char
-                            field += '"';
-                            i++; 
+                        // Handle double quotes (escaping a quote)
+                        if (inQuote && row[i+1] === '"') {
+                            currentField += '"';
+                            i++; // Skip next quote
                         } else {
-                            // This is the closing quote
-                            inQuote = false;
+                            inQuote = !inQuote;
                         }
+                    } else if (char === ',' && !inQuote) {
+                        columns.push(currentField.trim());
+                        currentField = '';
                     } else {
-                        // Any other character (including \n) is part of the field
-                        field += char; 
+                        currentField += char;
                     }
                 }
-                i++;
+                columns.push(currentField.trim()); // Add last field
+                lines.push(columns);
             }
-            
-            // Remove the header row if it's empty (can happen with file encoding issues)
-            if (rows.length > 0 && rows[0].length === 1 && rows[0][0] === '') {
-                rows.shift();
-            }
-
-            return rows;
+            return lines;
         }
 
 
