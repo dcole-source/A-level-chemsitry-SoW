@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-level Scheme of work</title>
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the tabs */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-top: none;
+            padding: 1.5rem; /* p-6 */
+            background-color: #ffffff;
+            border-radius: 0 0 0.5rem 0.5rem; /* rounded-b-lg */
+        }
+        .tab-content.visible {
+            display: block;
+            opacity: 1;
+        }
+        /* Style for the active tab */
+        .tab-btn.active {
+            border-color: #31473A;
+            color: #31473A;
+            background-color: #ffffff; /* White background for active tab content area */
+            border-bottom: 1px solid #ffffff; /* Cover the bottom border of the tab itself */
+            margin-bottom: -1px; /* Pull the tab content up to meet the tab */
+        }
+        /* Style for inactive tabs */
+        .tab-btn {
+            border-color: transparent; 
+            color: #6b7280; /* gray-500 */
+        }
+
+        /* Hide scrollbar but allow scrolling for tab container */
+        /* For Webkit browsers (Chrome, Safari) */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* For Firefox */
+        .no-scrollbar {
+            scrollbar-width: none;
+        }
+        /* For IE, Edge */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+        }
+
+        /* Prerequisite column has been removed */
+        
+        /* Hide T3 component knowledge column by default */
+        .t3-comp-knowledge-col {
+            display: none;
+        }
+    </style>
+</head>
+<body class="font-sans bg-[#EDF4F2] text-gray-800 p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl md:text-4xl font-bold text-[#31473A] mb-6">
+            A-level Chemistry Scheme of Work
+        </h1>
+
+        <!-- Tab Navigation -->
+        <div class="mb-4 border-b border-gray-300">
+            <!-- Scrollable container for tabs -->
+            <nav class="flex overflow-x-auto no-scrollbar -mb-px" aria-label="Tabs">
+                <!-- Tab buttons will be injected here by JavaScript -->
+            </nav>
+        </div>
+
+        <!-- Tab Content Container -->
+        <div id="tab-content-container">
+            <!-- Content for tabs will be injected here -->
+        </div>
+
+    </div>
+
+    <!-- START: Embedded Form Section -->
+    <div class="max-w-7xl mx-auto mt-8 mb-8">
+        <button id="toggle-form-btn" class="w-full bg-[#31473A] text-white py-3 px-6 rounded-lg shadow-md hover:bg-[#2a3c31] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#31473A]/50 font-medium">
+            Show Submission Form
+        </button>
+        <div id="form-container" class="hidden mt-4 rounded-lg overflow-hidden border border-gray-300 shadow-lg bg-white">
+            <iframe 
+                src="https://docs.google.com/forms/d/e/1FAIpQLSc5esQtjPrfT5fMdXbcc1vM4BSevnX3w7JOtWShYL__1OrwcA/viewform?embedded=true"
+                width="100%" 
+                height="600" 
+                frameborder="0" 
+                marginheight="0" 
+                marginwidth="0">
+                Loading form…
+            </iframe>
+        </div>
+    </div>
+    <!-- END: Embedded Form Section -->
+
+    <script type="module">
+        // --- App Logic ---
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            setupApp();
+        });
+
+        let appInitialized = false; 
+        let allSheetData = []; // Store all sheet data for Table 3
+        let allTable1SheetData = []; // Store all sheet data for Table 1
+        let currentFilter = { topic: 'Atomic Structure', keywords: [] }; // Store current filter state
+
+        function setupApp() {
+            if (appInitialized) return; 
+            appInitialized = true; 
+
+            // --- Event Listener for Form Toggle ---
+            const toggleBtn = document.getElementById('toggle-form-btn');
+            const formContainer = document.getElementById('form-container');
+            
+            if (toggleBtn && formContainer) {
+                toggleBtn.addEventListener('click', () => {
+                    const isHidden = formContainer.classList.contains('hidden');
+                    if (isHidden) {
+                        formContainer.classList.remove('hidden');
+                        toggleBtn.textContent = 'Hide Submission Form';
+                    } else {
+                        formContainer.classList.add('hidden');
+                        toggleBtn.textContent = 'Show Submission Form';
+                    }
+                });
+            }
+
+            setupTabs();
+            fetchSheetData(); // Fetches data for Table 3
+            fetchTable1Data(); // Fetches data for Table 1
+        }
+
+        // --- Tab Generation ---
+        const topics = [
+            'Atomic Structure', 'Amount of Substance', 'Bonding', 'Redox', 'Energetics',
+            'Chemical Equilibria', 'Kinetics', 'Thermodynamics', 'Rate Equations',
+            'Acids and Bases', 'Electrode Potentials', 'Groups 2 and 7', 'Transition Metals',
+            'Reactions of Ions in Aqueous Solutions', 'Introduction of Organic Chemistry',
+            'Alkanes', 'Halogenoalkanes', 'Alkenes', 'Alcohols',
+            'Carbonyl Compounds and Optical Isomerism', 'Carboxylic Acids and Derivatives',
+            'Organic Analysis (year 12)', 'Amines', 'Polymers', 'Amino Acids, Proteins and DNA',
+            'Organic Synthesis', 'NMR'
+        ];
+
+        const tabNav = document.querySelector('nav[aria-label="Tabs"]');
+        const tabContentContainer = document.getElementById('tab-content-container');
+
+        function setupTabs() {
+            if (!tabNav || !tabContentContainer) {
+                console.error("Tab containers not found.");
+                return;
+            }
+
+            topics.forEach((topic, index) => {
+                // Create tab button
+                const button = document.createElement('button');
+                button.className = 'tab-btn whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm transition-colors duration-200 focus:outline-none flex-shrink-0';
+                button.textContent = topic;
+                button.setAttribute('role', 'tab');
+                button.setAttribute('aria-controls', `tab-panel-${index}`);
+                button.setAttribute('data-tab-index', index);
+
+                if (index === 0) {
+                    button.classList.add('active');
+                    button.setAttribute('aria-selected', 'true');
+                } else {
+                    button.setAttribute('aria-selected', 'false');
+                }
+
+                // Create content panel
+                const panel = document.createElement('div');
+                panel.id = `tab-panel-${index}`;
+                panel.className = 'tab-content';
+                panel.setAttribute('role', 'tabpanel');
+                panel.setAttribute('tabindex', '0');
+                
+                // All tabs are now generated dynamically
+                panel.innerHTML = getTabContentHTML(index, topic);
+                
+                if (index === 0) {
+                    panel.classList.add('visible');
+                }
+
+                tabNav.appendChild(button);
+                tabContentContainer.appendChild(panel);
+            });
+
+            // --- Event Listeners (using delegation) ---
+
+            // Tab Navigation
+            tabNav.addEventListener('click', (e) => {
+                const clickedTab = e.target.closest('.tab-btn');
+                if (!clickedTab) return;
+
+                const clickedTabIndex = clickedTab.getAttribute('data-tab-index');
+                const topicName = clickedTab.textContent; 
+
+                // Deactivate all
+                tabNav.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-selected', 'false');
+                });
+                tabContentContainer.querySelectorAll('.tab-content').forEach(panel => {
+                    panel.classList.remove('visible');
+                });
+
+                // Activate clicked
+                clickedTab.classList.add('active');
+                clickedTab.setAttribute('aria-selected', 'true');
+                const activePanel = document.getElementById(`tab-panel-${clickedTabIndex}`);
+                if (activePanel) {
+                    activePanel.classList.add('visible');
+                }
+
+                // Update filter state and populate both tables
+                currentFilter.topic = topicName;
+                currentFilter.keywords = []; // Reset keywords when changing tabs
+                populateComponentKnowledgeTable(clickedTabIndex); // Populate Table 1
+                populateResourceTable(clickedTabIndex); // Populate Table 3
+                // Table 2 will be populated on checkbox change
+            });
+
+            // Content Container for dynamic buttons (CLICK)
+            tabContentContainer.addEventListener('click', (e) => {
+                
+                // Filter Button (for Table 3)
+                if (e.target.closest('.filter-resources-btn')) {
+                    const panel = e.target.closest('.tab-content');
+                    const tabIndex = panel.id.split('-')[2];
+                    const selectedKeywords = [];
+                    panel.querySelectorAll('.component-knowledge-checkbox:checked').forEach(checkbox => {
+                        selectedKeywords.push(checkbox.dataset.knowledge);
+                    });
+                    
+                    currentFilter.keywords = selectedKeywords;
+                    populateResourceTable(tabIndex); // Re-populate Table 3 only
+                }
+
+                // Show All Button (for Table 3)
+                if (e.target.closest('.show-all-resources-btn')) {
+                    const panel = e.target.closest('.tab-content');
+                    const tabIndex = panel.id.split('-')[2];
+                    currentFilter.keywords = []; // Clear keywords
+                    populateResourceTable(tabIndex); // Re-populate Table 3 only
+                }
+            });
+
+            // Content Container for checkbox changes (CHANGE)
+            tabContentContainer.addEventListener('change', (e) => {
+                // Populate Table 2 when a checkbox is changed
+                if (e.target.classList.contains('component-knowledge-checkbox')) {
+                    const panel = e.target.closest('.tab-content');
+                    const tabIndex = panel.id.split('-')[2];
+                    populateLessonKnowledgeTable(tabIndex);
+                }
+            });
+        }
+
+        // --- Google Sheet CSV Fetching Logic (Table 3) ---
+        async function fetchSheetData() {
+            // This is the sheet URL for Table 3 (Resources)
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdQRmfa6OfM8jH1U5bNth3z-f9HbeJ4Yw9B1bNSGX_ephmzfcY4PA4nS_CM9dPDzwHIvw3CtpAot7x/pub?output=csv";
+            
+            try {
+                const response = await fetch(sheetUrl, { cache: 'no-cache' });
+                if (!response.ok) throw new Error(`Failed to fetch sheet: ${response.statusText}`);
+                
+                const csvText = await response.text();
+                console.log("Fetched CSV Text (Table 3):", csvText.substring(0, 300) + "...");
+                
+                allSheetData = parseCSV(csvText); // Store data for Table 3
+
+                // Populate the initial table (Atomic Structure, index 0)
+                currentFilter.topic = 'Atomic Structure';
+                populateResourceTable(0);
+
+            } catch (error) {
+                console.error("Error fetching or parsing sheet data (Table 3):", error);
+                
+                let errorMessage = `Error loading resources.`;
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = `<strong>Error:</strong> Could not fetch Google Sheet for Table 3. This is likely a CORS or network issue.`;
+                } else {
+                    errorMessage = `<strong>Error:</strong> ${escapeHTML(error.message)}.`;
+                }
+
+                // Show error in all resource tables
+                document.querySelectorAll('tbody[id^="resources-tbody-"]').forEach(tbody => {
+                     tbody.innerHTML = `
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td colspan="6" class="py-4 px-6 italic text-red-500 text-center">${errorMessage}</td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        // --- Google Sheet CSV Fetching Logic (Table 1) ---
+        async function fetchTable1Data() {
+            // NEW URL for Table 1 (Master Sheet)
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS0xCK1yw-gyE_w73b5FLcHufVnMqypuWoXYT8451MeUJq3q_dn_Y3whUcku0SvpXrrF_D2H_YE4VWd/pub?output=csv";
+            
+            try {
+                const response = await fetch(sheetUrl, { cache: 'no-cache' });
+                if (!response.ok) throw new Error(`Failed to fetch sheet: ${response.statusText}`);
+                
+                const csvText = await response.text();
+                console.log("Fetched CSV Text (Table 1):", csvText.substring(0, 300) + "...");
+                
+                allTable1SheetData = parseCSV(csvText); // Store data for Table 1
+
+                // Populate the initial table (Atomic Structure, index 0)
+                populateComponentKnowledgeTable(0);
+
+            } catch (error) {
+                console.error("Error fetching or parsing sheet data (Table 1):", error);
+                
+                let errorMessage = `Error loading component knowledge.`;
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = `<strong>Error:</strong> Could not fetch Google Sheet for Table 1. This is likely a CORS or network issue.`;
+                } else {
+                    errorMessage = `<strong>Error:</strong> ${escapeHTML(error.message)}.`;
+                }
+
+                // Show error in all component knowledge tables
+                document.querySelectorAll('tbody[id^="component-knowledge-tbody-"]').forEach(tbody => {
+                     tbody.innerHTML = `
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td colspan="4" class="py-4 px-6 italic text-red-500 text-center">${errorMessage}</td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        // --- Populate Resource Table (Table 3) based on currentFilter ---
+        function populateResourceTable(tabIndex) {
+            const resourceTbody = document.getElementById(`resources-tbody-${tabIndex}`);
+            if (!resourceTbody) return;
+
+            resourceTbody.innerHTML = ''; // Clear existing
+            let rowsFound = 0;
+
+            if (allSheetData.length <= 1) {
+                if (resourceTbody.innerHTML.includes('Error')) return; 
+                resourceTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="6" class="py-4 px-6 italic text-gray-500 text-center">Sheet data is empty or not loaded.</td></tr>`;
+                return;
+            }
+
+            const { topic, keywords } = currentFilter;
+
+            for (let i = 1; i < allSheetData.length; i++) { // Loop from 1 to skip header row
+                const rowData = allSheetData[i];
+                if (rowData.length < 9) continue; 
+
+                const rowTopic = rowData[2] ? rowData[2].trim() : ''; // Column C for topic
+                
+                if (rowTopic === topic) { // 1. Filter by topic name
+                    const resourceKnowledge = escapeHTML(rowData[8] || '').toLowerCase(); // Column I
+                    
+                    let matchesKeywords = true;
+                    if (keywords.length > 0) { // 2. Filter by keywords
+                        matchesKeywords = keywords.some(keyword => {
+                            // Ensure keyword is not empty and is included
+                            return keyword && keyword.trim() !== '' && resourceKnowledge.includes(keyword.toLowerCase());
+                        });
+                    }
+
+                    if (matchesKeywords) {
+                        rowsFound++;
+                        
+                        // Data starts from Column D (index 3)
+                        const name = escapeHTML(rowData[3] || '');
+                        const purpose = escapeHTML(rowData[4] || '');
+                        const type = escapeHTML(rowData[5] || '');
+                        const info = escapeHTML(rowData[6] || '');
+                        const link = escapeHTML(rowData[7] || '');
+                        const t3_comp_knowledge = escapeHTML(rowData[8] || ''); // Get T3 knowledge
+
+                        const linkHTML = (link && (link.startsWith('http://') || link.startsWith('https://')))
+                            ? `<a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">${link}</a>`
+                            : link;
+
+                        const row = document.createElement('tr');
+                        row.className = 'bg-white border-b hover:bg-gray-50';
+                        row.innerHTML = `
+                            <td class="py-4 px-6">${name}</td>
+                            <td class="py-4 px-6">${purpose}</td>
+                            <td class="py-4 px-6">${type}</td>
+                            <td class="py-4 px-6">${info}</td>
+                            <td class="py-4 px-6">${linkHTML}</td>
+                            <td class="py-4 px-6 t3-comp-knowledge-col">${t3_comp_knowledge}</td>
+                        `;
+                        resourceTbody.appendChild(row);
+                    }
+                }
+            }
+
+            if (rowsFound === 0) {
+                const message = keywords.length > 0
+                    ? `No resources found for "${escapeHTML(topic)}" matching your filter.`
+                    : `No resources found for "${escapeHTML(topic)}".`;
+                resourceTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="6" class="py-4 px-6 italic text-gray-500 text-center">${message}</td></tr>`;
+            }
+        }
+
+        // --- Populate Component Knowledge Table (Table 1) ---
+        function populateComponentKnowledgeTable(tabIndex) {
+            const knowledgeTbody = document.getElementById(`component-knowledge-tbody-${tabIndex}`);
+            if (!knowledgeTbody) return;
+
+            knowledgeTbody.innerHTML = ''; // Clear existing
+            let rowsFound = 0;
+            const topic = topics[tabIndex]; // Get topic name from index
+
+            if (allTable1SheetData.length <= 1) {
+                if (knowledgeTbody.innerHTML.includes('Error')) return; 
+                knowledgeTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="4" class="py-4 px-6 italic text-gray-500 text-center">Sheet data is empty or not loaded.</td></tr>`;
+                return;
+            }
+
+            // First pass: collect all rows for this topic
+            const topicRows = [];
+            for (let i = 1; i < allTable1SheetData.length; i++) {
+                const rowData = allTable1SheetData[i];
+                
+                // New Mapping: Need at least 6 columns (A-F)
+                if (rowData.length < 6) continue; 
+                
+                // New Mapping: Topic is in Column A (index 0)
+                const rowTopic = rowData[0] ? rowData[0].trim() : '';
+
+                if (rowTopic === topic) {
+                    rowsFound++;
+                    
+                    // New Mapping: B=Lesson, C=LI, D=Prereq, F=CK
+                    const lesson = rowData[1] || '';                       // Column B (raw, not escaped yet)
+                    const learningIntention = rowData[2] || '';            // Column C (raw, not escaped yet)
+                    const prereq = escapeHTML(rowData[3] || '');           // Column D - Get for Table 2
+                    const componentKnowledge = escapeHTML(rowData[5] || ''); // Column F (Column E is ignored)
+
+                    topicRows.push({
+                        lesson: lesson.trim(),
+                        lessonEscaped: escapeHTML(lesson),
+                        learningIntention: learningIntention.trim(),
+                        learningIntentionEscaped: escapeHTML(learningIntention),
+                        prereq,
+                        componentKnowledge
+                    });
+                }
+            }
+
+            if (rowsFound === 0) {
+                knowledgeTbody.innerHTML = `<tr class="bg-white border-b hover:bg-gray-50"><td colspan="4" class="py-4 px-6 italic text-gray-500 text-center">No component knowledge found for "${escapeHTML(topic)}".</td></tr>`;
+                return;
+            }
+
+            // Second pass: group rows by lesson, then by learning intention
+            const lessonGroups = [];
+            let currentLessonGroup = null;
+            
+            for (let i = 0; i < topicRows.length; i++) {
+                const row = topicRows[i];
+                
+                if (row.lesson !== '') {
+                    // Start a new lesson group
+                    if (currentLessonGroup) {
+                        lessonGroups.push(currentLessonGroup);
+                    }
+                    currentLessonGroup = {
+                        lesson: row.lessonEscaped,
+                        rows: [row]
+                    };
+                } else {
+                    // Add to current lesson group (merged cell continuation)
+                    if (currentLessonGroup) {
+                        currentLessonGroup.rows.push(row);
+                    } else {
+                        // Edge case: empty lesson at the start
+                        currentLessonGroup = {
+                            lesson: '',
+                            rows: [row]
+                        };
+                    }
+                }
+            }
+            
+            // Don't forget the last group
+            if (currentLessonGroup) {
+                lessonGroups.push(currentLessonGroup);
+            }
+
+            // Third pass: within each lesson group, group by learning intention
+            for (const lessonGroup of lessonGroups) {
+                const liGroups = [];
+                let currentLIGroup = null;
+                
+                for (let i = 0; i < lessonGroup.rows.length; i++) {
+                    const row = lessonGroup.rows[i];
+                    
+                    if (row.learningIntention !== '') {
+                        // Start a new learning intention group
+                        if (currentLIGroup) {
+                            liGroups.push(currentLIGroup);
+                        }
+                        currentLIGroup = {
+                            learningIntention: row.learningIntentionEscaped,
+                            rows: [row]
+                        };
+                    } else {
+                        // Add to current learning intention group (merged cell continuation)
+                        if (currentLIGroup) {
+                            currentLIGroup.rows.push(row);
+                        } else {
+                            // Edge case: empty LI at the start
+                            currentLIGroup = {
+                                learningIntention: '',
+                                rows: [row]
+                            };
+                        }
+                    }
+                }
+                
+                // Don't forget the last LI group
+                if (currentLIGroup) {
+                    liGroups.push(currentLIGroup);
+                }
+                
+                lessonGroup.liGroups = liGroups;
+            }
+
+            // Fourth pass: render rows with rowspan for both lesson and learning intention
+            for (const lessonGroup of lessonGroups) {
+                const lessonRowspan = lessonGroup.rows.length;
+                let rowIndexInLesson = 0;
+                
+                for (const liGroup of lessonGroup.liGroups) {
+                    const liRowspan = liGroup.rows.length;
+                    
+                    for (let i = 0; i < liGroup.rows.length; i++) {
+                        const rowData = liGroup.rows[i];
+                        const row = document.createElement('tr');
+                        row.className = 'bg-white border-b hover:bg-gray-50';
+                        
+                        let html = '';
+                        
+                        // Include lesson cell only on the first row of the lesson group
+                        if (rowIndexInLesson === 0) {
+                            html += `<td class="py-4 px-6" rowspan="${lessonRowspan}">${lessonGroup.lesson}</td>`;
+                        }
+                        
+                        // Include learning intention cell only on the first row of the LI group
+                        if (i === 0) {
+                            html += `<td class="py-4 px-6" rowspan="${liRowspan}">${liGroup.learningIntention}</td>`;
+                        }
+                        
+                        // Always include component knowledge and checkbox
+                        html += `
+                            <td class="py-4 px-6">${rowData.componentKnowledge}</td>
+                            <td class="py-4 px-2 text-center">
+                                <input type="checkbox" class="component-knowledge-checkbox h-4 w-4 rounded border-gray-300 text-[#31473A] focus:ring-[#31473A]/50" 
+                                    data-knowledge="${rowData.componentKnowledge}" 
+                                    data-prereq="${rowData.prereq}">
+                            </td>
+                        `;
+                        
+                        row.innerHTML = html;
+                        knowledgeTbody.appendChild(row);
+                        rowIndexInLesson++;
+                    }
+                }
+            }
+        }
+
+        // --- NEW: Populate Lesson Knowledge Table (Table 2) ---
+        function populateLessonKnowledgeTable(tabIndex) {
+            const lessonTbody = document.getElementById(`lesson-knowledge-tbody-${tabIndex}`);
+            if (!lessonTbody) return;
+
+            lessonTbody.innerHTML = ''; // Clear existing
+
+            const panel = document.getElementById(`tab-panel-${tabIndex}`);
+            if (!panel) return;
+
+            const checkedBoxes = panel.querySelectorAll('.component-knowledge-checkbox:checked');
+
+            if (checkedBoxes.length === 0) {
+                lessonTbody.innerHTML = `
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <td colspan="2" class="py-4 px-6 italic text-gray-500 text-center">Select one or more items from Table 1 to see lesson knowledge.</td>
+                    </tr>`;
+                return;
+            }
+
+            checkedBoxes.forEach(checkbox => {
+                const componentKnowledge = checkbox.dataset.knowledge;
+                const prereq = checkbox.dataset.prereq;
+
+                const row = document.createElement('tr');
+                row.className = 'bg-white border-b hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="py-4 px-6">${componentKnowledge}</td>
+                    <td class="py-4 px-6">${prereq}</td>
+                `;
+                lessonTbody.appendChild(row);
+            });
+        }
+
+
+        // Robust CSV parser to handle commas inside quotes
+        function parseCSV(text) {
+            const lines = [];
+            const rows = text.split(/\r\n|\n/); // Split by new line
+            
+            for (const row of rows) {
+                if (!row) continue;
+                
+                const columns = [];
+                let inQuote = false;
+                let currentField = '';
+                
+                for (let i = 0; i < row.length; i++) {
+                    const char = row[i];
+                    
+                    if (char === '"') {
+                        // Handle double quotes (escaping a quote)
+                        if (inQuote && row[i+1] === '"') {
+                            currentField += '"';
+                            i++; // Skip next quote
+                        } else {
+                            inQuote = !inQuote;
+                        }
+                    } else if (char === ',' && !inQuote) {
+                        columns.push(currentField.trim());
+                        currentField = '';
+                    } else {
+                        currentField += char;
+                    }
+                }
+                columns.push(currentField.trim()); // Add last field
+                lines.push(columns);
+            }
+            return lines;
+        }
+
+
+        // Helper function to prevent XSS
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.toString()
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // --- Helper to get Content HTML for ANY tab ---
+        function getTabContentHTML(index, topic) {
+            // Filter buttons (for Table 3)
+            const filterButtonsHTML = `
+                <div class="flex space-x-2">
+                    <button class="filter-resources-btn text-sm bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-600/50">
+                        Filter by Selection
+                    </button>
+                    <button class="show-all-resources-btn text-sm bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500/50">
+                        Show All
+                    </button>
+                </div>`;
+
+            // HTML for Table 1
+            const table1HTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xl font-semibold text-gray-800">Table 1: Component Knowledge</h3>
+                </div>
+                <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200 mb-8">
+                    <table id="table-1-${index}" class="w-full min-w-[800px] text-sm text-left text-gray-700">
+                        <thead class="text-xs text-gray-800 uppercase bg-[#31473A]/10">
+                            <tr>
+                                <th scope="col" class="py-3 px-6 w-[20%]">Lesson</th>
+                                <th scope="col" class="py-3 px-6 w-[30%]">Learning Intention</th>
+                                <th scope="col" class="py-3 px-6 w-[45%]">Component Knowledge</th>
+                                <th scope="col" class="py-3 px-6 w-[5%]">Select</th>
+                            </tr>
+                        </thead>
+                        <tbody id="component-knowledge-tbody-${index}">
+                            <tr class="bg-white border-b hover:bg-gray-50">
+                                <td colspan="4" class="py-4 px-6 italic text-gray-500 text-center">Loading component knowledge...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            // HTML for NEW Table 2
+            const table2HTML = `
+                <div class="flex justify-between items-center mb-3 mt-8">
+                    <h3 class="text-xl font-semibold text-gray-800">Table 2: Lesson Knowledge</h3>
+                </div>
+                <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                    <table class="w-full min-w-[600px] text-sm text-left text-gray-700">
+                        <thead class="text-xs text-gray-800 uppercase bg-[#31473A]/10">
+                            <tr>
+                                <th scope="col" class="py-3 px-6 w-[50%]">Component Knowledge</th>
+                                <th scope="col" class="py-3 px-6 w-[50%]">Prerequisite Knowledge</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lesson-knowledge-tbody-${index}">
+                            <tr class="bg-white border-b hover:bg-gray-50">
+                                <td colspan="2" class="py-4 px-6 italic text-gray-500 text-center">Select one or more items from Table 1 to see lesson knowledge.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            // HTML for Table 3 (was Table 2)
+            const table3HTML = `
+                <div class="flex justify-between items-center mb-3 mt-8">
+                    <h3 class="text-xl font-semibold text-gray-800">Table 3: Resources</h3>
+                    ${filterButtonsHTML}
+                </div>
+                <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                    <table class="w-full min-w-[800px] text-sm text-left text-gray-700">
+                        <thead class="text-xs text-gray-800 uppercase bg-[#31473A]/10">
+                            <tr>
+                                <th scope="col" class="py-3 px-6">Name of Resource</th>
+                                <th scope="col" class="py-3 px-6">Purpose of Resource</th>
+                                <th scope="col" class="py-3 px-6">Type of Resource</th>
+                                <th scope="col" class="py-3 px-6">More information</th>
+                                <th scope="col" class="py-3 px-6">Link</th>
+                                <th scope="col" class="py-3 px-6 t3-comp-knowledge-col">Component Knowledge</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resources-tbody-${index}">
+                            <tr class="bg-white border-b hover:bg-gray-50">
+                                <td colspan="6" class="py-4 px-6 italic text-gray-500 text-center">Loading resources...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            // Combine all parts
+            return `
+                <h2 class="text-2xl font-semibold text-[#31473A] mb-4">${escapeHTML(topic)}</h2>
+                ${table1HTML}
+                ${table2HTML}
+                ${table3HTML}
+            `;
+        }
+
+    </script>
+
+</body>
+</html>

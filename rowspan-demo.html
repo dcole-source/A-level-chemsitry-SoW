@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rowspan Visual Test - Before and After</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem;
+        }
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #31473A;
+            color: white;
+        }
+        .empty-cell {
+            background-color: #fee;
+        }
+        .rowspan-cell {
+            background-color: #efe;
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-7xl mx-auto p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Rowspan Implementation - Visual Comparison</h1>
+        
+        <div class="comparison-container">
+            <!-- BEFORE -->
+            <div>
+                <h2 class="text-2xl font-semibold text-red-600 mb-4">❌ Before (Without Rowspan)</h2>
+                <p class="mb-4 text-gray-600">Empty cells visible where merged cells existed in Google Sheet</p>
+                <table class="text-sm">
+                    <thead>
+                        <tr>
+                            <th>Lesson</th>
+                            <th>Learning Intention</th>
+                            <th>Component Knowledge</th>
+                            <th>Select</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lesson 1: Introduction</td>
+                            <td>Understand atomic structure basics</td>
+                            <td>Define atom, proton, neutron</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td class="empty-cell">(empty)</td>
+                            <td class="empty-cell">(empty)</td>
+                            <td>Identify subatomic particles</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td class="empty-cell">(empty)</td>
+                            <td class="empty-cell">(empty)</td>
+                            <td>Use isotope abundance data</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td class="empty-cell">(empty)</td>
+                            <td>Calculate relative atomic mass</td>
+                            <td>Apply mass number formula</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td>Lesson 2: Bonding</td>
+                            <td>Describe ionic bonding</td>
+                            <td>Electron transfer mechanism</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td class="empty-cell">(empty)</td>
+                            <td class="empty-cell">(empty)</td>
+                            <td>Identify ionic compounds</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- AFTER -->
+            <div>
+                <h2 class="text-2xl font-semibold text-green-600 mb-4">✅ After (With Dual Rowspan)</h2>
+                <p class="mb-4 text-gray-600">Both Lesson and Learning Intention cells properly span multiple rows</p>
+                <table class="text-sm">
+                    <thead>
+                        <tr>
+                            <th>Lesson</th>
+                            <th>Learning Intention</th>
+                            <th>Component Knowledge</th>
+                            <th>Select</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="4" class="rowspan-cell"><strong>Lesson 1: Introduction</strong><br><small>(rowspan=4)</small></td>
+                            <td rowspan="3" class="rowspan-cell"><strong>Understand atomic structure basics</strong><br><small>(rowspan=3)</small></td>
+                            <td>Define atom, proton, neutron</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <!-- lesson & LI cells merged above -->
+                            <td>Identify subatomic particles</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <!-- lesson & LI cells merged above -->
+                            <td>Use isotope abundance data</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <!-- lesson cell merged above -->
+                            <td rowspan="1" class="rowspan-cell"><strong>Calculate relative atomic mass</strong><br><small>(rowspan=1)</small></td>
+                            <td>Apply mass number formula</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2" class="rowspan-cell"><strong>Lesson 2: Bonding</strong><br><small>(rowspan=2)</small></td>
+                            <td rowspan="2" class="rowspan-cell"><strong>Describe ionic bonding</strong><br><small>(rowspan=2)</small></td>
+                            <td>Electron transfer mechanism</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <!-- lesson & LI cells merged above -->
+                            <td>Identify ionic compounds</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 class="text-xl font-semibold text-blue-800 mb-3">Key Improvements</h3>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li>✨ <strong>No more empty cells</strong> - Both Lesson AND Learning Intention cells span properly</li>
+                <li>🎯 <strong>Accurate representation</strong> - Matches the original Google Sheet merged cells</li>
+                <li>📱 <strong>Better visual hierarchy</strong> - Clear grouping at both Lesson and LI levels</li>
+                <li>♿ <strong>Accessibility maintained</strong> - Proper table structure for screen readers</li>
+                <li>✅ <strong>All functionality preserved</strong> - Checkboxes, filtering, and data attributes work correctly</li>
+            </ul>
+        </div>
+
+        <div class="mt-8 p-6 bg-gray-100 border border-gray-300 rounded-lg">
+            <h3 class="text-xl font-semibold text-gray-800 mb-3">Technical Details</h3>
+            <div class="space-y-2 text-sm text-gray-700">
+                <p><strong>Algorithm:</strong> Four-pass approach (collect → group by lesson → group by LI → render)</p>
+                <p><strong>Detection:</strong> Empty lesson/LI values indicate merged cell continuations</p>
+                <p><strong>Rendering:</strong> Nested rowspan for both columns</p>
+                <p><strong>Compatibility:</strong> Standard HTML5 rowspan, works in all modern browsers</p>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <a href="A-level%20SOW-test-rowspan.html" class="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                View Live Implementation →
+            </a>
+        </div>
+    </div>
+</body>
+</html>
