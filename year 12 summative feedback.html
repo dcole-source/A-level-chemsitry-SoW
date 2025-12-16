@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 12 Chemistry Summative Test Feedback</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #334155;
+        }
+        .slide {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .slide.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        code {
+            background-color: #e2e8f0;
+            color: #1e293b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .guide-list li::marker {
+            color: #64748b;
+        }
+        .answer-content {
+            transition: all 0.3s ease-in-out;
+        }
+        #slide-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748B%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+            background-repeat: no-repeat;
+            background-position: right 0.7rem center;
+            background-size: 0.65rem auto;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6">
+
+    <div class="w-full max-w-3xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-slate-800">Year 12 Chemistry</h1>
+            <p class="text-lg text-slate-600 mt-2">Summative Test Feedback</p>
+        </header>
+
+        <main id="slides-container" class="bg-white rounded-xl shadow-lg p-6 sm:p-10 min-h-[60vh]">
+            <!-- Slides will be injected here by JavaScript -->
+             <p>Loading feedback...</p>
+        </main>
+
+        <footer class="mt-8 grid grid-cols-3 gap-4 items-center w-full max-w-3xl mx-auto">
+            <button id="prevBtn" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:scale-100">
+                Previous
+            </button>
+            <div class="relative text-center">
+                 <select id="slide-select" class="w-full bg-white border border-slate-300 text-slate-700 font-medium py-2 px-4 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer">
+                    <!-- Options will be populated by JS -->
+                </select>
+                <div id="slide-counter" class="text-sm text-slate-500 mt-1"></div>
+            </div>
+            <button id="nextBtn" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:scale-100">
+                Next
+            </button>
+        </footer>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const studentGuideContent = `
+# Question 1
+## Part (a): TOF Calculation
+
+### Common Errors & Misconceptions:
+* **Final Answer: 179.1 g**
+This answer arises from correctly calculating the mass of the ion (\`[X+H]+\`) but forgetting to subtract the mass of the proton (H+) at the end, as the question asks for the mass of molecule X, not the ion. This would score **4 out of 5 marks**.
+* **Unit Errors:** Confusing kg and g during the calculation. The mass \`m\` in \`KE = 1/2 mv²\` must be in kg. Forgetting to convert the mass of one ion from kg to g before multiplying by Avogadro's constant will lead to an incorrect final answer.
+
+### How to get the right answer:
+This is a multi-step calculation combining kinetic energy and time of flight principles.
+1.  **Calculate speed (v):** Rearrange \`d = vt\` to get \`v = d/t\`.
+    * \`v = 0.750 m / 2.48 × 10⁻⁵ s = 30241.9 m s⁻¹\`
+2.  **Calculate mass of one ion in kg (m):** Rearrange \`KE = ½ mv²\` to get \`m = 2KE / v²\`.
+    * \`m = (2 × 1.36 × 10⁻¹⁶ J) / (30241.9)² = 2.974 × 10⁻²⁵ kg\`
+3.  **Convert mass to g:**
+    * \`2.974 × 10⁻²⁵ kg × 1000 = 2.974 × 10⁻²² g\`
+4.  **Calculate molar mass of the ion:** Multiply the mass of one ion by the Avogadro constant (L).
+    * \`Mass = (2.974 × 10⁻²² g) × (6.022 × 10²³ mol⁻¹) = 179.1 g mol⁻¹\`
+5.  **Calculate mass of molecule X:** The ion was formed by electrospray, so its mass is \`[X+H]+\`. Subtract the mass of H+ (which is effectively 1).
+    * \`Mass of X = 179.1 - 1 = 178.1 g mol⁻¹\`
+
+---
+# Question 1
+## Part (b): Electron Impact Ionisation
+
+### Common Errors & Misconceptions:
+* **Confusing with Electrospray:** Describing the sample being dissolved in a volatile solvent and passed through a needle. This is electrospray ionisation. Electron impact is for gases.
+* **Vague Description:** Saying "an electron hits the sample". This is too simple. The key is that a *high-energy* electron *knocks out* another electron from the sample molecule/atom to form a positive ion.
+
+### How to get the right answer:
+Electron impact ionisation involves two key steps:
+1.  A high-energy electron is fired from an electron gun at the gaseous sample.
+2.  This high-energy electron collides with a molecule/atom and has enough energy to **knock out an outer shell electron**, forming a 1+ ion. For example: \`M(g) + e⁻ → M⁺(g) + 2e⁻\`.
+
+---
+# Question 1
+## Part (c): Ion Reaching Detector Last
+
+### Common Errors & Misconceptions:
+* **Choosing Argon (Ar):** Stating that argon reaches last because it has the highest atomic number. This is incorrect. The time of flight is determined by the mass-to-charge ratio (m/z).
+* **Reasoning based on size:** Arguing that the largest atom travels slowest. While related, the precise reason is its mass.
+
+### How to get the right answer:
+In TOF mass spectrometry, all ions are accelerated to the same kinetic energy. The equation \`KE = ½ mv²\` shows that for a constant KE, an ion with a **higher mass (m)** will have a **lower velocity (v)**.
+1.  **Identify the ion with the highest mass:**
+    * Ar: Mr = 39.9
+    * CO₂: Mr = 12.0 + (2 × 16.0) = 44.0
+    * N₂: Mr = 2 × 14.0 = 28.0
+    * O₂: Mr = 2 × 16.0 = 32.0
+2.  **Conclusion:** The **CO₂⁺** ion has the highest mass (and m/z ratio, since z=1), so it will travel the slowest and reach the detector last.
+
+---
+# Question 1
+## Part (d): Ion Detection
+
+### Common Errors & Misconceptions:
+* **Vague Answers:** Saying "a computer detects the ions" or "the machine measures the current". This lacks chemical detail.
+* **Confusing Detection and Abundance:** Mixing up the two parts of the question.
+
+### How to get the right answer:
+* **How ions are detected:** When the positive ions strike the negatively charged detector plate, each ion **gains an electron**. This transfer of electrons constitutes a tiny **electric current**.
+* **How abundance is measured:** The size of the current generated is directly **proportional to the number of ions** hitting the detector. A larger current means a greater abundance of that specific ion.
+
+---
+# Question 2
+## Part (a): Electron Configuration of Chromium
+
+### Common Errors & Misconceptions:
+* **Writing \`...3d⁴ 4s²\`:** This is the most common error. It follows the standard Aufbau principle but doesn't account for the extra stability of a half-filled d-subshell.
+* **Forgetting the full configuration:** Only writing the shorthand from Argon. The question asks for the *full* electron configuration.
+
+### How to get the right answer:
+Chromium (Cr) is one of the key exceptions to the standard filling rules.
+1.  The atomic number of Cr is 24.
+2.  To achieve greater stability, an electron is promoted from the 4s subshell to the 3d subshell.
+3.  This results in both the 4s and 3d subshells being half-filled.
+4.  The correct configuration is: **\`1s² 2s² 2p⁶ 3s² 3p⁶ 3d⁵ 4s¹\`**.
+
+---
+# Question 2
+## Part (b): Isotope Symbol
+
+### Common Errors & Misconceptions:
+* **Incorrect Proton Number:** Adding 2 protons to 52 (the mass number) instead of 24 (the atomic number).
+* **Incorrect Mass Number:** Forgetting to add the extra protons to the mass number as well as the neutrons.
+
+### How to get the right answer:
+1.  **Original Atom (⁵²Cr):** Atomic Number (protons) = 24, Mass Number = 52.
+2.  **New Atom - Protons:** It has 2 more protons, so the new atomic number is \`24 + 2 = 26\`. The element with atomic number 26 is Iron (Fe).
+3.  **New Atom - Neutrons:** The original atom had \`52 - 24 = 28\` neutrons. The new atom has 3 more, so \`28 + 3 = 31\` neutrons.
+4.  **New Atom - Mass Number:** The new mass number is protons + neutrons = \`26 + 31 = 57\`.
+5.  The correct symbol is **⁵⁷₂₆Fe**.
+
+---
+# Question 2
+## Part (c): Relative Atomic Mass Calculation
+
+### Common Errors & Misconceptions:
+* **Final Answer: 50.8**
+This answer comes from incorrectly calculating the abundance of the fourth isotope. For example, dividing the remaining percentage (3.6%) by 100 instead of using it directly in the Ar calculation. This would likely score **1 or 2 out of 3 marks** depending on the working shown.
+* **Algebraic Errors:** Setting up the Ar equation correctly but then making a mistake when rearranging to solve for x.
+
+### How to get the right answer:
+1.  **Find Percentage Abundance of 4th Isotope:** The total abundance must be 100%.
+    * \`% = 100 - (82.8 + 10.9 + 2.7) = 100 - 96.4 = 3.6%\`
+2.  **Set up the Relative Atomic Mass (Ar) Equation:** Let the mass number of the fourth isotope be 'x'.
+    * \`52.09 = [(52 × 82.8) + (53 × 10.9) + (54 × 2.7) + (x × 3.6)] / 100\`
+3.  **Solve for x:**
+    * \`5209 = 4305.6 + 577.7 + 145.8 + 3.6x\`
+    * \`5209 = 5029.1 + 3.6x\`
+    * \`179.9 = 3.6x\`
+    * \`x = 179.9 / 3.6 = 49.97 ≈ 50\`
+
+---
+# Question 3
+## Multiple Choice: V²⁺ Electron Configuration
+
+### Common Errors & Misconceptions:
+* **Choosing Answer B (\`...3d¹ 4s²\`):** This is a very common error. It results from removing the last two electrons that were *filled* according to the Aufbau principle (from the 3d subshell), rather than removing from the outermost shell first.
+* **Reasoning:** For transition metals, electrons are always removed from the **4s subshell first** when forming positive ions, before any are removed from the 3d subshell.
+
+### How to get the right answer:
+1.  **Write the configuration of a Vanadium atom (V):** Atomic number is 23. Configuration is \`1s² 2s² 2p⁶ 3s² 3p⁶ 3d³ 4s²\`.
+2.  **Form the V²⁺ ion:** Remove the two outermost electrons. These are the two electrons in the 4s subshell.
+3.  **The resulting configuration is:** \`1s² 2s² 2p⁶ 3s² 3p⁶ 3d³\`.
+4.  This corresponds to **Answer A**.
+
+---
+# Question 4
+## Part (a): Deviation in Ionisation Energy Trend
+
+### Common Errors & Misconceptions:
+* **Identifying Sulfur (S) but explaining with Aluminium's reasoning:** Stating that Sulfur's outer electron is in a higher energy p-orbital. This is incorrect. Sulfur's deviation is due to electron pair repulsion.
+* **Identifying Aluminium (Al) but explaining with Sulfur's reasoning:** Stating that Aluminium has paired electrons that repel. This is incorrect. Aluminium's deviation is due to its outer electron being in a 3p orbital, which is higher in energy than the 3s orbital of Magnesium.
+
+### How to get the right answer:
+You can choose either Aluminium or Sulfur.
+* **Element: Aluminium (Al)**
+    * **Explanation:** The first ionisation energy of Al is lower than Mg. This is because the outer electron in Al is in a **3p orbital**. The outer electron in Mg is in a **3s orbital**. The 3p orbital is at a **higher energy level** and is more shielded from the nucleus, so less energy is needed to remove the electron.
+* **Element: Sulfur (S)**
+    * **Explanation:** The first ionisation energy of S is lower than P. This is because in Sulfur, one of the 3p orbitals contains a **pair of electrons**. These two electrons **repel** each other, making it easier to remove one of them compared to the singly occupied orbitals in Phosphorus.
+
+---
+# Question 4
+## Part (b): Third Ionisation Energy Equation
+
+### Common Errors & Misconceptions:
+* **Incorrect Charge:** Showing a 1+ ion losing an electron to become 2+ (\`Na⁺ → Na²⁺\`). This is the *second* ionisation energy.
+* **Missing or Incorrect State Symbols:** Forgetting to include \`(g)\` for all species is a common way to lose the mark. Ionisation energies are defined for species in the gaseous state.
+* **Incorrect Process:** Writing \`Na(g) → Na³⁺(g) + 3e⁻\`. This represents the sum of the first three ionisation energies, not just the third.
+
+### How to get the right answer:
+The third ionisation energy is the energy required to remove one electron from a gaseous 2+ ion.
+* **Reactant:** You must start with a gaseous sodium ion with a 2+ charge: \`Na²⁺(g)\`.
+* **Products:** This ion loses one electron (\`e⁻\`) to form a gaseous ion with a 3+ charge: \`Na³⁺(g)\`.
+* **Full Equation:** **\`Na²⁺(g) → Na³⁺(g) + e⁻\`**
+
+---
+# Question 4
+## Part (c): High 3rd Ionisation Energy of Sodium
+
+### Common Errors & Misconceptions:
+* **"It has a full shell":** This is too vague. While true that the Na²⁺ ion has a full outer shell, the key reason for the high energy is *which* shell the electron is being removed from.
+* **"It's stable":** Similar to the above, this doesn't explain *why* it is stable or why so much energy is needed.
+
+### How to get the right answer:
+1.  **Identify the electron configuration:** The configuration of a Na atom is \`1s²2s²2p⁶3s¹\`. The Na²⁺ ion has the configuration \`1s²2s²2p⁵\`.
+2.  **Identify the shell:** The third electron is removed from the **second principal energy level** (n=2). The first two electrons were removed from the third shell (n=3).
+3.  **Explain the energy difference:** The second shell is **much closer to the nucleus** and experiences **less shielding** from inner electrons. Therefore, the electrostatic attraction between the nucleus and this electron is very strong, and a large amount of energy is required to remove it.
+
+---
+# Question 5
+## Part (a): MgO and HCl Equation
+
+### Common Errors & Misconceptions:
+* **Incorrect formula for magnesium chloride:** Writing MgCl instead of MgCl₂.
+* **Incorrect balancing:** Forgetting to put a 2 in front of the HCl.
+
+### How to get the right answer:
+This is a standard neutralisation reaction between a basic oxide and a strong acid.
+* **Reactants:** Magnesium Oxide (MgO) and Hydrochloric Acid (HCl).
+* **Products:** Magnesium Chloride (MgCl₂) and Water (H₂O).
+* **Balanced Equation:** **\`MgO(s) + 2HCl(aq) → MgCl₂(aq) + H₂O(l)\`**.
+
+---
+# Question 5
+## Part (b): Use of an Indicator
+
+### Common Errors & Misconceptions:
+* **Vague answers:** Saying "to see a colour change" or "to see when the reaction is finished".
+* **Confusing purpose:** Stating it is to measure the pH, which is what a pH meter does, not an indicator.
+
+### How to get the right answer:
+An indicator is used to determine the **end point** of the titration. This is the point at which the reaction is just complete (i.e., all the excess acid has been neutralised by the sodium hydroxide). The indicator signals this by undergoing a sharp **colour change**.
+
+---
+# Question 5
+## Part (c): Back Titration Calculation
+
+### Common Errors & Misconceptions:
+* **Final Answer: 59.6%**
+This answer comes from forgetting the **1:2 mole ratio** between MgO and HCl (\`MgO + 2HCl\`). The calculation assumes a 1:1 ratio. This would score **5 out of 6 marks** as it's a single error in an otherwise correct method.
+* **Final Answer: A very large or negative percentage.**
+This often comes from forgetting the **1:10 dilution factor** (scaling from the 25 cm³ sample back up to the 250 cm³ flask). This means the calculated moles of excess acid will be too small, leading to an incorrect result for reacted acid. This would score **4 out of 6 marks**.
+
+### How to get the right answer:
+1.  **Moles NaOH used:** \`n = CV = 0.0900 mol dm⁻³ × (20.38 / 1000) dm³ = 0.0018342 mol\`.
+2.  **Moles excess HCl in 25 cm³:** Ratio is 1:1, so \`n(HCl) = 0.0018342 mol\`.
+3.  **Moles excess HCl in 250 cm³:** \`0.0018342 mol × 10 = 0.018342 mol\`.
+4.  **Initial moles HCl added:** \`n = CV = 2.00 mol dm⁻³ × (25.0 / 1000) dm³ = 0.0500 mol\`.
+5.  **Moles HCl reacted with MgO:** \`Initial - Excess = 0.0500 - 0.018342 = 0.031658 mol\`.
+6.  **Moles MgO:** Ratio is 1:2 (MgO:HCl), so \`n(MgO) = 0.031658 / 2 = 0.015829 mol\`.
+7.  **Mass MgO:** \`mass = n × Mr = 0.015829 mol × 40.3 g mol⁻¹ = 0.6379 g\`.
+8.  **Percentage by Mass:** \`(0.6379 g / 2.14 g) × 100 = 29.8%\`.
+
+---
+# Question 6
+## Atomic Radius Trend Across a Period
+
+### Common Errors & Misconceptions:
+* **Incorrect Reason for Decrease:** Stating that the atomic radius decreases across a period because there are more electrons. While true that there are more electrons, this is not the reason for the decrease in size.
+* **Confusing Periods and Groups:** Describing the trend down a group (increasing shells) instead of across a period.
+
+### How to get the right answer:
+1.  **State the Trend:** The atomic radius **decreases** across Period 3 (from Na to Cl).
+2.  **Explain the factors:** As you move across the period:
+    * The **nuclear charge increases** (number of protons increases).
+    * The number of electron shells **remains the same**.
+    * Shielding by inner electrons is **similar**.
+3.  **Conclusion:** The increased attraction between the nucleus and the outer shell electrons pulls the electrons closer to the nucleus, causing the atomic radius to decrease.
+
+---
+# Question 7
+## Diamond vs. Graphite Conductivity
+
+### Common Errors & Misconceptions:
+* **Vague explanation for Graphite:** Saying graphite has "free electrons" or "sea of electrons" without explaining their origin. The term "sea of electrons" is specific to metallic bonding.
+* **No mention of delocalised electrons:** Failing to use the key term "delocalised electrons" is a common way to miss marks.
+
+### How to get the right answer:
+* **Graphite:** Each carbon atom forms **three covalent bonds**. The fourth outer electron from each carbon atom is **delocalised** into a system of electrons that are free to move between the layers. It is these mobile, delocalised electrons that allow graphite to conduct electricity.
+* **Diamond:** Each carbon atom forms **four strong covalent bonds** in a rigid tetrahedral lattice. All four outer electrons are used in these localised bonds. There are **no delocalised electrons** or free-moving charged particles, so diamond cannot conduct electricity.
+
+---
+# Question 8
+## Multiple Choice: Giant Metallic Lattice
+
+### Common Errors & Misconceptions:
+* **Choosing MgO:** This confuses a giant ionic lattice with a giant metallic lattice. MgO consists of positive and negative ions.
+* **Choosing SiO₂:** This is a giant covalent structure.
+* **Choosing S₈:** This is a simple molecular solid.
+
+### How to get the right answer:
+A giant metallic lattice consists of positive metal ions surrounded by a sea of delocalised electrons. Of the options, **Sodium (Na)** is the only metal and is the correct answer.
+
+---
+# Question 9
+## Part (a): Limiting Reagent and Gas Calculation
+
+### Common Errors & Misconceptions:
+* **Incorrect Limiting Reagent:** Incorrectly concluding Mg is the limiting reagent. This often happens by comparing the initial moles (0.0165 mol Mg vs 0.030 mol HCl) without considering the 1:2 stoichiometry.
+* **Final Answer: 3.89 x 10⁻⁴ m³**
+This answer arises from using the moles of Mg (0.0165 mol) instead of the moles of HCl (0.015 mol based on the reaction) to calculate the volume of hydrogen. This shows an error in identifying the limiting reagent and would score **4 or 5 out of 7 marks**.
+* **PV=nRT errors:** Using temperature in °C instead of Kelvin, or using incorrect units for pressure (kPa instead of Pa) or volume (dm³ instead of m³).
+
+### How to get the right answer:
+1.  **Calculate moles of reactants:**
+    * \`n(Mg) = mass / Ar = 0.400 g / 24.3 = 0.0165 mol\`.
+    * \`n(HCl) = CV = 1.50 mol dm⁻³ × (20.0 / 1000) dm³ = 0.030 mol\`.
+2.  **Identify Limiting Reagent:** From the equation \`Mg + 2HCl\`, the ratio is 1:2.
+    * 0.0165 mol of Mg would need \`0.0165 × 2 = 0.033 mol\` of HCl. We only have 0.030 mol.
+    * Therefore, **HCl is the limiting reagent**.
+3.  **Calculate moles of H₂ produced:** The ratio of HCl:H₂ is 2:1.
+    * \`n(H₂) = n(HCl) / 2 = 0.030 / 2 = 0.015 mol\`.
+4.  **Use the Ideal Gas Equation (PV=nRT) to find volume:**
+    * P = 101 kPa = 101000 Pa
+    * V = ? m³
+    * n = 0.015 mol
+    * R = 8.31 J K⁻¹ mol⁻¹
+    * T = 15 °C = 288 K
+5.  **Rearrange and solve for V:**
+    * \`V = nRT / P = (0.015 × 8.31 × 288) / 101000 = 3.55 × 10⁻⁴ m³\`.
+
+---
+# Question 9
+## Part (b): Percentage Uncertainty
+
+### Common Errors & Misconceptions:
+* **Forgetting to multiply burette uncertainty by two:** The uncertainty for a burette reading applies to both the initial and final readings, so it must be doubled.
+* **Using the wrong value for the measurement:** For example, using the titre volume for the pipette calculation.
+
+### How to get the right answer:
+The percentage uncertainty for the balance is the most significant.
+* **Balance:** \`(% uncertainty) = (0.005 / 0.400) × 100 = 1.25%\`
+* **Pipette:** \`(% uncertainty) = (0.05 / 20.0) × 100 = 0.25%\`
+* To improve the experiment, you should try to reduce the largest percentage uncertainty. Therefore, **using a more precise balance** or **using a larger mass of magnesium** would be the best improvement.
+
+---
+# Question 10
+## Multiple Choice: Non-Planar Molecule
+
+### Common Errors & Misconceptions:
+* **Confusing 'bent' with 'non-planar':** A molecule with three atoms, like water, is bent but is still planar (all three atoms can lie on a single plane).
+* **Forgetting lone pairs:** Incorrectly drawing NH₃ as trigonal planar. The lone pair forces the N-H bonds down into a trigonal pyramidal shape.
+
+### How to get the right answer:
+* BCl₃ is trigonal planar.
+* C₂H₄ (ethene) is planar.
+* H₂O is bent, and therefore planar.
+* **NH₃ (ammonia)** has a lone pair on the central nitrogen atom, which gives it a **trigonal pyramidal** shape. This shape is three-dimensional and therefore **non-planar**.
+
+---
+# Question 11
+## Part (a): Electronegativity
+
+### Common Errors & Misconceptions:
+* **Omitting "in a covalent bond":** The definition specifically relates to the attraction of electrons within a covalent bond.
+* **Confusing with Ionisation Energy:** Describing the energy needed to remove an electron.
+
+### How to get the right answer:
+Electronegativity is the ability of an atom to **attract the pair of electrons** in a **covalent bond**.
+
+---
+# Question 11
+## Part (b): Bond Polarity in H-S
+
+### Common Errors & Misconceptions:
+* **Stating the bond is non-polar:** While the electronegativity difference is not huge, sulfur is more electronegative than hydrogen, so there is a permanent dipole.
+* **Incorrect dipole direction:** Assigning the δ+ to sulfur and δ- to hydrogen.
+
+### How to get the right answer:
+Sulfur is **more electronegative** than hydrogen. This means it attracts the shared pair of electrons more strongly. This creates a **permanent dipole** in the H-S bond, with sulfur having a partial negative charge (**δ-**) and hydrogen having a partial positive charge (**δ+**).
+
+---
+# Question 11
+## Part (c): Polarity of CCl₄
+
+### Common Errors & Misconceptions:
+* **"The dipoles cancel out":** While true, this is not a full explanation. You need to state *why* they cancel out.
+* **"The charges cancel out":** This is incorrect phrasing. It's the dipoles (vectors) that cancel, not the partial charges themselves.
+* **Confusing shape and symmetry:** A molecule can have a standard shape (like trigonal pyramidal) but still be asymmetrical if the atoms are different.
+
+### How to get the right answer:
+1.  **State the shape:** CCl₄ is a **tetrahedral** molecule.
+2.  **State the symmetry:** Because all four atoms attached to the central carbon are identical (Cl), the molecule is **symmetrical**.
+3.  **Explain the consequence:** The individual C-Cl bond dipoles are vectors of equal magnitude pointing to the corners of a regular tetrahedron. Due to the symmetrical arrangement, these dipoles **act in opposite directions and cancel each other out**, resulting in a molecule with no overall net dipole. Therefore, CCl₄ is non-polar.
+
+---
+# Question 11
+## Part (d): Shape of H₂S
+
+### Common Errors & Misconceptions:
+* **Drawing it as linear:** This ignores the two lone pairs on the central sulfur atom which repel the bonding pairs.
+* **Giving the wrong bond angle:** A linear molecule would have a 180° bond angle.
+
+### How to get the right answer:
+1.  **Electron Pairs:** The central sulfur atom has 6 outer shell electrons. It forms 2 single covalent bonds with hydrogen. This leaves **2 lone pairs** of electrons.
+2.  **Repulsion:** There are 4 pairs of electrons in total (2 bonding, 2 lone). Lone pair-lone pair repulsion is strongest, followed by lone pair-bond pair.
+3.  **Shape:** This repulsion forces the two bonding pairs closer together, resulting in a **non-linear** or **bent** shape. The bond angle is approximately 92°.
+
+---
+# Question 11
+## Part (e): Polarity of H₂S Molecule
+
+### Common Errors & Misconceptions:
+* **Stating it is non-polar:** This error usually follows from incorrectly identifying the shape as linear, where the dipoles would cancel.
+* **Confusing bond polarity and molecular polarity:** Acknowledging the H-S bonds are polar but failing to consider the overall shape.
+
+### How to get the right answer:
+1.  **Bond Polarity:** The H-S bonds are polar due to the difference in electronegativity.
+2.  **Shape:** The molecule has a **bent (asymmetrical)** shape.
+3.  **Conclusion:** Because the molecule is asymmetrical, the polar H-S bonds do not cancel each other out. This results in a **net permanent dipole**, making the H₂S molecule **polar**.
+
+---
+# Question 12
+## Shapes and Bond Angles
+
+### Common Errors & Misconceptions:
+* **SF₃⁺ Shape:** Stating it is trigonal planar. This error comes from only considering the three bonding pairs and ignoring the lone pair on the central sulfur atom.
+* **SF₃⁺ Bond Angle:** Giving the bond angle as 120°. This follows from the incorrect trigonal planar shape. The lone pair repels more strongly, reducing the angle.
+* **Justification:** A common error is to just state "lone pairs repel more" without comparing lone pair-bond pair repulsion to bond pair-bond pair repulsion.
+
+### How to get the right answer:
+**For SF₆:**
+1.  **Electron pairs:** Sulfur has 6 outer electrons, and each F provides 1, making 12 electrons / 6 pairs. All are bonding pairs.
+2.  **Shape:** 6 bonding pairs and 0 lone pairs give an **octahedral** shape.
+3.  **Bond Angle:** The bond angle is **90°**.
+4.  **Justification:** The 6 bonding pairs repel each other equally to get as far apart as possible.
+
+**For SF₃⁺:**
+1.  **Electron pairs:** Sulfur has 6 outer electrons. Three F atoms provide 3 electrons. The positive charge means one electron is lost. Total = \`6 + 3 - 1 = 8\` electrons / 4 pairs. This gives 3 bonding pairs and 1 lone pair.
+2.  **Shape:** The shape based on electron pairs is tetrahedral, but the molecular shape is **trigonal pyramidal**.
+3.  **Bond Angle:** The bond angle is approximately **107°** (any value from 103-107 is acceptable).
+4.  **Justification:** The **lone pair-bond pair repulsion is greater than the bond pair-bond pair repulsion**. This pushes the bonding pairs closer together, reducing the bond angle from the tetrahedral 109.5° to ~107°.
+
+---
+# Question 13
+## Multiple Choice: Boiling Points of Isomers
+
+### Common Errors & Misconceptions:
+* **Confusing branching and boiling point:** Incorrectly thinking that more branched molecules have higher boiling points.
+* **Ignoring intermolecular forces:** Not relating the shape of the molecule to the strength of the van der Waals forces.
+
+### How to get the right answer:
+The question compares the boiling points of C₄H₁₀ isomers.
+1.  **Forces:** All isomers are non-polar and only have van der Waals forces. The strength of these forces depends on the number of electrons (which is the same for all isomers) and the surface area of contact.
+2.  **Shape:** **Butane** is a straight-chain alkane, giving it a larger surface area of contact between molecules. 2-methylpropane is a branched alkane, making it more spherical and reducing the surface area of contact.
+3.  **Conclusion:** Butane has stronger van der Waals forces, which require more energy to overcome. Therefore, **butane has the highest boiling point**.
+
+---
+# Question 14
+## Part (a): Boiling Points
+
+### Common Errors & Misconceptions:
+* **"Breaking covalent bonds":** This is the most significant and common error. Changes of state (like boiling) involve overcoming intermolecular forces, **not** breaking the strong covalent bonds within the molecules.
+* **Vague IMF description:** Simply stating "pentan-2-ol has stronger forces" without naming the specific types of forces involved (hydrogen bonding vs. van der Waals).
+
+### How to get the right answer:
+1.  **Identify IMF in pent-1-ene:** Pent-1-ene is a non-polar hydrocarbon. It only has weak **van der Waals forces** between its molecules.
+2.  **Identify IMF in pentan-2-ol:** Pentan-2-ol is an alcohol. It has an -OH group, which means in addition to van der Waals forces, it can also form **hydrogen bonds** between molecules.
+3.  **Compare IMF strength:** Hydrogen bonds are significantly **stronger** than van der Waals forces.
+4.  **Relate to energy:** Therefore, **more energy is required** to overcome the intermolecular forces in pentan-2-ol, resulting in a higher boiling point.
+
+---
+# Question 15
+## Shapes and Polarity
+
+### Common Errors & Misconceptions:
+* **Incorrect shape for PF₃:** Stating PF₃ is trigonal planar. This ignores the lone pair on the phosphorus atom which dictates the shape.
+* **Incorrect polarity for BF₃:** Arguing that BF₃ is polar because the B-F bonds are polar. This fails to consider the symmetrical shape of the molecule which causes the bond dipoles to cancel out.
+
+### How to get the right answer:
+* **BF₃:**
+    1. **Shape:** Boron has 3 outer shell electrons and forms 3 bonding pairs with fluorine. There are no lone pairs. This results in a **trigonal planar** shape with a bond angle of **120°**.
+    2. **Polarity:** The molecule is **symmetrical**. Although the B-F bonds are polar, the dipoles are arranged symmetrically and cancel each other out. Therefore, BF₃ is **non-polar**.
+* **PF₃:**
+    1. **Shape:** Phosphorus has 5 outer shell electrons. It forms 3 bonding pairs with fluorine and has **1 lone pair**. This results in a **trigonal pyramidal** shape with a bond angle of approximately **107°**.
+    2. **Polarity:** The molecule is **asymmetrical** due to the lone pair. The individual P-F bond dipoles do not cancel out. This results in a net dipole moment, making PF₃ a **polar** molecule.
+
+---
+# Question 16
+## Intermolecular Forces and Boiling Points
+
+### Common Errors & Misconceptions:
+* **Breaking Covalent Bonds:** Stating that boiling involves breaking the covalent N-H bonds in ammonia. Boiling only overcomes intermolecular forces, not intramolecular bonds.
+* **Incorrect Force Identification:** Ascribing hydrogen bonding to methane (CH₄) or only mentioning van der Waals for ammonia (NH₃).
+
+### How to get the right answer:
+The order of boiling points from lowest to highest is Ne, CH₄, NH₃.
+1.  **Neon (Ne):** Has the lowest boiling point. It exists as individual atoms. The only intermolecular forces are very weak **van der Waals forces** (instantaneous dipole-induced dipole forces) due to the small number of electrons.
+2.  **Methane (CH₄):** Is a simple covalent molecule. It has more electrons than a neon atom, so its **van der Waals forces** are stronger than those in neon, requiring more energy to overcome.
+3.  **Ammonia (NH₃):** Has the highest boiling point. In addition to van der Waals forces, it has strong **hydrogen bonds** between molecules. This is due to the large difference in electronegativity between Nitrogen and Hydrogen. Hydrogen bonds are much stronger than van der Waals forces and require the most energy to break, resulting in the highest boiling point.
+
+---
+# Question 17
+## Metallic Bonding in Magnesium
+
+### Common Errors & Misconceptions:
+* **Describing Ions Only:** Stating that magnesium is just a lattice of positive ions, but failing to mention the delocalised electrons that are essential for the bonding.
+* **Vague Conductivity Explanation:** Simply saying "magnesium has free electrons". A good answer must explain that these are delocalised outer shell electrons that are mobile throughout the structure.
+* **Malleability Explanation:** Saying "the atoms slide" without mentioning that the delocalised electrons maintain the electrostatic attraction (the bond) as the layers of ions move.
+
+### How to get the right answer:
+* **Structure and Bonding:** Magnesium consists of a giant lattice of positive magnesium ions (Mg²⁺) arranged in a regular, repeating pattern. The outer shell electrons from each magnesium atom are **delocalised**, forming a 'sea' of mobile electrons that surround the positive ions. The strong **metallic bond** is the electrostatic force of attraction between the positive ions and the delocalised electrons.
+* **Conductivity:** The delocalised electrons are free to move throughout the entire metal lattice. When a voltage is applied, these mobile electrons can flow and carry a current.
+* **Malleability:** When a force is applied to the metal, the layers of positive ions can slide over one another into new positions without disrupting the metallic bond. The delocalised electrons are free to move and stabilise the new arrangement of ions, preventing the structure from shattering.
+
+---
+# Question 18
+## Limiting Reagent Calculation
+
+### Common Errors & Misconceptions:
+* **Final Answer: 4.41 g**
+This answer comes from incorrectly identifying CaS as the limiting reagent and using its moles (0.0346 mol) to calculate the mass of SO₂ produced. According to the mark scheme, this would score a maximum of **2 out of 5 marks** (for calculating moles of CaS and for the final mass calculation step as an error carried forward).
+* **Justification Error:** Comparing the initial moles (0.0346 mol CaS vs 0.0723 mol CaSO₄) and concluding CaS is limiting because the number is smaller, without considering the 1:3 mole ratio required by the equation.
+
+### How to get the right answer:
+1.  **Calculate moles of reactants:**
+    * \`n(CaS) = mass / Mr = 2.50 g / 72.2 = 0.0346 mol\`.
+    * \`n(CaSO₄) = mass / Mr = 9.85 g / 136.2 = 0.0723 mol\`.
+2.  **Show that CaSO₄ is the limiting reagent:** The reaction ratio is \`1 CaS : 3 CaSO₄\`.
+    * To react with 0.0346 mol of CaS, you would need \`0.0346 × 3 = 0.1038 mol\` of CaSO₄.
+    * You only have 0.0723 mol of CaSO₄, which is not enough. Therefore, **CaSO₄ is the limiting reagent**.
+3.  **Calculate moles of SO₂ produced:** Use the moles of the limiting reagent. The ratio of \`CaSO₄ : SO₂\` is \`3 : 4\`.
+    * \`n(SO₂) = n(CaSO₄) × (4 / 3) = 0.0723 mol × (4 / 3) = 0.0964 mol\`.
+4.  **Calculate mass of SO₂:**
+    * \`mass = n × Mr = 0.0964 mol × 64.1 g mol⁻¹ = 6.18 g\`.
+
+---
+# Question 19
+## Part (a): Relative Atomic Mass Definition
+
+### Common Errors & Misconceptions:
+* **Omitting 'weighted mean':** Simply saying 'the average mass' is not precise enough. It must be weighted according to the abundance of the isotopes.
+* **Incorrect standard:** Forgetting to mention '1/12th the mass of a carbon-12 atom' or using a different standard like hydrogen.
+
+### How to get the right answer:
+The relative atomic mass is the **weighted mean mass** of an atom of an element compared to **1/12th the mass of an atom of carbon-12**.
+
+---
+# Question 19
+## Part (b): Electron Configuration of Rhenium (Re)
+
+### Common Errors & Misconceptions:
+* **Incorrect filling order:** Getting the order of the 4f, 5d, and 6s subshells incorrect.
+* **Wrong number of electrons:** Rhenium has 75 electrons, so a simple miscount can lead to the wrong configuration.
+
+### How to get the right answer:
+Rhenium (Re) has an atomic number of 75. The full electron configuration, following the Aufbau principle, is:
+**\`1s²2s²2p⁶3s²3p⁶4s²3d¹⁰4p⁶5s²4d¹⁰5p⁶6s²4f¹⁴5d⁵\`**
+
+---
+# Question 19
+## Part (c): Isotope Abundance Calculation
+
+### Common Errors & Misconceptions:
+* **Algebraic errors:** Setting up the equation correctly but making a mistake when rearranging and solving for x.
+* **Final answer error:** Calculating the abundance of one isotope (e.g., 40%) but not giving the abundance of the other isotope (60%).
+
+### How to get the right answer:
+1.  **Set up the equation:** Let the abundance of ¹⁸⁵Re be 'x'. Then the abundance of ¹⁸⁷Re is '(100 - x)'.
+    * \`186.2 = [(185 × x) + (187 × (100 - x))] / 100\`
+2.  **Solve for x:**
+    * \`18620 = 185x + 18700 - 187x\`
+    * \`18620 = 18700 - 2x\`
+    * \`2x = 18700 - 18620\`
+    * \`2x = 80\`
+    * \`x = 40\`
+3.  **State abundances:** The abundance of **¹⁸⁵Re is 40%** and the abundance of **¹⁸⁷Re is 60%**.
+
+---
+# Question 19
+## Part (d): TOF Calculation (Time)
+
+### Common Errors & Misconceptions:
+* **Unit Errors:** The mass of the ion must be in kg to be used in the kinetic energy formula (\`KE = 1/2 mv²\`). Using a mass in g or amu directly will lead to an incorrect answer.
+* **Rearrangement Error:** Incorrectly rearranging the \`KE\` and \`v=d/t\` equations. A common mistake is to forget to take the square root at the end when calculating time. This would score **3 out of 5 marks**.
+* **Mixing up isotopes:** Using the mass of the wrong isotope (e.g. ¹⁸⁷Re instead of ¹⁸⁵Re if the question asked for ¹⁸⁵Re).
+
+### How to get the right answer:
+This calculation is the reverse of finding the mass; here you are given the mass and need to find the time of flight.
+1.  **Find mass of one ¹⁸⁵Re ion in kg (m):** Use the given molar mass and Avogadro's constant. Remember to convert g/mol to kg/ion.
+    * \`m = (185 g/mol) / (6.022 × 10²³ ions/mol) / (1000 g/kg) = 3.072 × 10⁻²⁵ kg\`
+2.  **Calculate speed (v):** Rearrange \`KE = ½ mv²\` to get \`v = √(2KE / m)\`.
+    * \`v = √((2 × 4.83 × 10⁻¹⁶ J) / 3.072 × 10⁻²⁵ kg) = 56085 m s⁻¹\`
+3.  **Calculate time (t):** Rearrange \`v = d/t\` to get \`t = d/v\`.
+    * \`t = 1.50 m / 56085 m s⁻¹ = 2.67 × 10⁻⁵ s\`
+
+---
+# Question 20
+## Part (a): Concentration Calculation
+
+### Common Errors & Misconceptions:
+* **Final Answer: 1.21 x 10⁻³ g**
+This answer comes from correctly calculating the mass of NaF in 1 g of toothpaste but forgetting the final step to scale this up to 1 kg of toothpaste. This error would score **2 out of 3 marks**.
+* **Mr Error:** Using an incorrect relative formula mass for NaF. The correct Mr is \`23.0 + 19.0 = 42.0\`. Using the wrong Mr would lose the first and last marks.
+
+### How to get the right answer:
+This is a unit conversion and scaling calculation.
+1.  **Calculate Mr of NaF:** \`Mr = 23.0 (Na) + 19.0 (F) = 42.0\`.
+2.  **Calculate mass of NaF in 1 g of toothpaste:** The concentration of F⁻ ions is given in mol per g. Since the formula is NaF, \`moles(NaF) = moles(F⁻)\`.
+    * \`Mass = moles × Mr = (2.88 × 10⁻⁵ mol) × (42.0 g mol⁻¹) = 1.2096 × 10⁻³ g\`.
+3.  **Calculate mass of NaF in 1 kg of toothpaste:** There are 1000 g in 1 kg.
+    * \`Mass in 1 kg = (1.2096 × 10⁻³ g) × 1000 = 1.21 g\`.
+
+---
+# Question 20
+## Part (b): Dot-and-Cross for NaF
+
+### Common Errors & Misconceptions:
+* **Drawing covalent bonds:** Showing shared electrons between sodium and fluorine. It is an ionic compound.
+* **Forgetting charges:** Failing to show the Na⁺ and F⁻ charges on the resulting ions.
+* **Incorrect number of electrons:** Showing the wrong number of outer shell electrons for either atom.
+
+### How to get the right answer:
+The diagram should show:
+1.  A sodium atom with its single outer shell electron transferring to a fluorine atom, which has seven outer shell electrons.
+2.  The resulting ions: a sodium ion with a +1 charge and no outer electrons shown (\`Na⁺\`) and a fluoride ion with a -1 charge and a full outer shell of 8 electrons (\`[F]⁻\`). The electrons should be shown as dots and crosses to distinguish their origin.
+
+---
+# Question 20
+## Part (c): Atomic Radius Trend in Halogens
+
+### Common Errors & Misconceptions:
+* **Incorrect trend:** Stating that the radius decreases down the group.
+* **Incomplete explanation:** Only mentioning one factor (e.g., increased nuclear charge) without considering the increase in shells and shielding.
+
+### How to get the right answer:
+1.  **Trend:** The atomic radius **increases** down Group 7.
+2.  **Explanation:** As you go down the group, there are **more electron shells**. Although the nuclear charge increases, the increased number of inner electron shells leads to **more shielding**. The effect of increased shells and shielding outweighs the increased nuclear charge, resulting in a larger atomic radius.
+
+---
+# Question 20
+## Part (d): Electronegativity Trend in Halogens
+
+### Common Errors & Misconceptions:
+* **Incorrect trend:** Stating that electronegativity increases down the group.
+* **Confusing with atomic radius:** Giving the explanation for the atomic radius trend instead of electronegativity.
+
+### How to get the right answer:
+1.  **Trend:** Electronegativity **decreases** down Group 7.
+2.  **Explanation:** As you go down the group, the **atomic radius increases** and there is **more shielding** from inner electrons. This means the electrostatic attraction between the nucleus and the bonding pair of electrons gets weaker, so the ability to attract those electrons decreases.
+`;
+
+        const slidesContainer = document.getElementById('slides-container');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounter = document.getElementById('slide-counter');
+        const slideSelect = document.getElementById('slide-select');
+
+        let slides = [];
+        let currentSlide = 0;
+
+        function toggleAnswer(id, button) {
+            const answerDiv = document.getElementById(id);
+            const isHidden = answerDiv.classList.contains('hidden');
+            if (isHidden) {
+                answerDiv.classList.remove('hidden');
+                button.textContent = 'Hide Answer';
+            } else {
+                answerDiv.classList.add('hidden');
+                button.textContent = 'Show Answer';
+            }
+        }
+        
+        window.toggleAnswer = toggleAnswer;
+
+
+        function parseMarkdownChunk(chunk) {
+            let processedChunk = chunk.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-slate-800">$1</strong>')
+                                     .replace(/`([^`]+)`/g, '<code>$1</code>');
+
+            const lines = processedChunk.trim().split('\n');
+            let html = '';
+            let inList = null; 
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+
+                if (line.startsWith('# ')) {
+                    if (inList) { html += `</${inList}>`; inList = null; }
+                    html += `<h1 class="text-2xl font-bold text-slate-800 mb-6">${line.substring(2)}</h1>`;
+                    continue;
+                }
+                if (line.startsWith('## ')) {
+                    if (inList) { html += `</${inList}>`; inList = null; }
+                    html += `<h2 class="text-xl font-semibold text-slate-700 mb-4 border-b pb-2">${line.substring(3)}</h2>`;
+                    continue;
+                }
+                if (line.startsWith('### ')) {
+                    if (inList) { html += `</${inList}>`; inList = null; }
+                    html += `<h3 class="text-lg font-semibold text-slate-600 my-3">${line.substring(4)}</h3>`;
+                    continue;
+                }
+                
+                const isUl = line.startsWith('* ');
+                const isOl = line.match(/^\d+\. /);
+
+                if (isUl || isOl) {
+                    const listType = isUl ? 'ul' : 'ol';
+                    const listClass = isUl ? 'list-disc' : 'list-decimal';
+                    
+                    if (inList !== listType) {
+                        if (inList) html += `</${inList}>`;
+                        html += `<${listType} class="${listClass} list-inside space-y-2 mb-4 guide-list">`;
+                        inList = listType;
+                    }
+                    
+                    const itemContent = isUl ? line.substring(2) : line.replace(/^\d+\. /, '');
+                    html += `<li>${itemContent}</li>`;
+
+                } else {
+                     if (inList) {
+                        html += `</${inList}>`;
+                        inList = null;
+                    }
+                    if (line.trim()) {
+                         html += `<p class="mb-4 leading-relaxed">${line}</p>`;
+                    }
+                }
+            }
+             if (inList) {
+                html += `</${inList}>`;
+            }
+            return html;
+        }
+
+        function parseSlideContent(md) {
+            const parts = md.split('### How to get the right answer:');
+            const commonErrorsPart = parts[0];
+            const rightAnswerPart = parts.length > 1 ? '### How to get the right answer:\n' + parts[1] : '';
+
+            let html = parseMarkdownChunk(commonErrorsPart);
+
+            if (rightAnswerPart) {
+                const answerId = `answer-${Math.random().toString(36).substr(2, 9)}`;
+                html += `<button onclick="toggleAnswer('${answerId}', this)" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-200">Show Answer</button>`;
+                html += `<div id="${answerId}" class="answer-content hidden mt-4 border-t border-slate-200 pt-4">`;
+                html += parseMarkdownChunk(rightAnswerPart);
+                html += `</div>`;
+            }
+            return html;
+        }
+
+
+        function createSlides() {
+            slidesContainer.innerHTML = ''; // Clear loading message
+            const finalSlidesContent = studentGuideContent.trim().split('---');
+            finalSlidesContent.forEach((content, index) => {
+                const slideDiv = document.createElement('div');
+                slideDiv.className = 'slide p-2';
+                const slideHTML = parseSlideContent(content.trim());
+                slideDiv.innerHTML = slideHTML;
+                slidesContainer.appendChild(slideDiv);
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = slideHTML;
+                const h1 = tempDiv.querySelector('h1');
+                const h2 = tempDiv.querySelector('h2');
+                
+                let qNum = '';
+                if (h1) {
+                    const match = h1.textContent.match(/Question (\d+|[A-Z])/);
+                    if (match) qNum = `Q${match[1]}`;
+                }
+
+                let qPart = '';
+                if (h2) {
+                     const match = h2.textContent.match(/Part (\([a-z]\))/);
+                     if(match) {
+                        qPart = match[1];
+                     }
+                }
+
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${qNum}${qPart}`;
+                slideSelect.appendChild(option);
+            });
+            slides = document.querySelectorAll('.slide');
+        }
+
+        function showSlide(n) {
+            if (!slides || slides.length === 0) return;
+            slides.forEach((slide) => {
+                slide.classList.remove('active');
+            });
+            slides[n].classList.add('active');
+            
+            slideCounter.textContent = `Slide ${n + 1} of ${slides.length}`;
+            slideSelect.value = n;
+
+            prevBtn.disabled = n === 0;
+            nextBtn.disabled = n === slides.length - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+        
+        function jumpToSlide(event) {
+            const newSlideIndex = parseInt(event.target.value, 10);
+            if (!isNaN(newSlideIndex)) {
+                currentSlide = newSlideIndex;
+                showSlide(currentSlide);
+            }
+        }
+
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+        slideSelect.addEventListener('change', jumpToSlide);
+
+        createSlides();
+        showSlide(currentSlide);
+    });
+    </script>
+
+</body>
+</html>
+
